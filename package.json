@@ -1,0 +1,24 @@
+{
+  "name": "exif-frame-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "bun run --filter web dev",
+    "build": "bun run --filter exif-frame build && bun run --filter web build",
+    "build:lib": "bun run --filter exif-frame build",
+    "typecheck": "bun run --filter exif-frame typecheck && bun run --filter web typecheck",
+    "test": "bun run --filter exif-frame test",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check"
+  },
+  "devDependencies": {
+    "oxfmt": "^0.73.0",
+    "oxlint": "^1.88.0",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,13 @@
+node_modules/
+dist/
+*.local
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+apps/web/dist/
+packages/exif-frame/dist/
+coverage/
+.turbo/
+*.tsbuildinfo

@@ -1,0 +1,71 @@
+{
+  "name": "exif-frame",
+  "version": "0.1.0",
+  "description": "Lightweight EXIF photo frame generator for browser and Node.js / Bun",
+  "keywords": [
+    "canvas",
+    "exif",
+    "frame",
+    "metadata",
+    "photo",
+    "photography"
+  ],
+  "homepage": "https://github.com/minagishl/exif-frame#readme",
+  "bugs": {
+    "url": "https://github.com/minagishl/exif-frame/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minagishl/exif-frame.git",
+    "directory": "packages/exif-frame"
+  },
+  "files": [
+    "dist",
+    "assets",
+    "README.md"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "browser": {
+    "./dist/canvas/node.js": "./dist/canvas/node.stub.js"
+  },
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "browser": "./dist/index.js",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "bun run scripts/build.ts",
+    "minify-logos": "bun run scripts/minify-logos.js",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "exifr": "^7.1.3"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "^0.1.80",
+    "@types/bun": "^1.2.23",
+    "svgo": "^4.1.0",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "@napi-rs/canvas": "^0.1.80"
+  },
+  "peerDependenciesMeta": {
+    "@napi-rs/canvas": {
+      "optional": true
+    }
+  }
+}
