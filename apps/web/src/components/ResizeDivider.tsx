@@ -72,7 +72,7 @@ export function ResizeDivider({ sidebarWidth, onWidthChange }: ResizeDividerProp
       className="group relative z-30 hidden w-0 shrink-0 touch-none select-none lg:block"
     >
       <div className="absolute inset-y-0 -left-1.5 w-3 cursor-col-resize">
-        <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-white/10 transition-[width,background-color] duration-150 group-hover:w-[3px] group-hover:bg-indigo-600/70" />
+        <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-white/10 transition-[width,background-color] duration-150 group-hover:w-[3px] group-hover:bg-blue-500/70" />
       </div>
     </div>
   );

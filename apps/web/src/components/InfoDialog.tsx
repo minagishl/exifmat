@@ -34,7 +34,7 @@ export function InfoDialog({ ref }: { ref: Ref<HTMLDialogElement> }) {
     >
       <header
         style={{ backgroundImage: `url(${aboutBg})` }}
-        className="flex aspect-video flex-col items-center justify-center bg-indigo-700 bg-[length:150%] bg-[position:100%_50%] px-5 text-center"
+        className="flex aspect-video flex-col items-center justify-center bg-blue-700 bg-[length:150%] bg-[position:100%_50%] px-5 text-center"
       >
         <h2
           id="info-dialog-title"

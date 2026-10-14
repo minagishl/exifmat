@@ -38,7 +38,7 @@ export function UiToggle({
     >
       <span className="text-xs leading-5 text-zinc-300">{label}</span>
       <span
-        className="group relative h-[18px] w-8 shrink-0 rounded-full bg-zinc-600 transition-colors data-[on=true]:bg-indigo-600"
+        className="group relative h-[18px] w-8 shrink-0 rounded-full bg-zinc-600 transition-colors data-[on=true]:bg-blue-500"
         data-on={checked ? "true" : "false"}
         aria-hidden
       >
@@ -110,7 +110,7 @@ export function UiParam({
         disabled={disabled}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="h-[5px] w-full cursor-pointer appearance-none rounded-full [background:linear-gradient(to_right,var(--color-indigo-600)_0%,var(--color-indigo-600)_var(--range-pct),var(--color-zinc-700)_var(--range-pct),var(--color-zinc-700)_100%)] disabled:cursor-not-allowed disabled:opacity-45 [&::-webkit-slider-thumb]:size-3.5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:bg-indigo-600 [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgb(0_0_0/0.45)] [&::-moz-range-thumb]:size-3.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:bg-indigo-600 [&::-moz-range-thumb]:shadow-[0_1px_3px_rgb(0_0_0/0.45)]"
+        className="h-[5px] w-full cursor-pointer appearance-none rounded-full [background:linear-gradient(to_right,var(--color-blue-500)_0%,var(--color-blue-500)_var(--range-pct),var(--color-zinc-700)_var(--range-pct),var(--color-zinc-700)_100%)] disabled:cursor-not-allowed disabled:opacity-45 [&::-webkit-slider-thumb]:size-3.5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:bg-blue-500 [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgb(0_0_0/0.45)] [&::-moz-range-thumb]:size-3.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:bg-blue-500 [&::-moz-range-thumb]:shadow-[0_1px_3px_rgb(0_0_0/0.45)]"
         style={{ "--range-pct": pct } as CSSProperties}
       />
     </div>
