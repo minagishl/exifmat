@@ -237,7 +237,7 @@ export function Sidebar({
                   value={logoId}
                   disabled={disabled || !showLogo}
                   onChange={(e) => onLogoIdChange(e.target.value)}
-                  className="h-8 min-w-0 max-w-[60%] flex-1 rounded-lg border border-white/10 bg-zinc-950 px-2 text-xs text-zinc-100 outline-none transition-colors enabled:hover:border-white/20 disabled:cursor-not-allowed"
+                  className="h-8 min-w-0 max-w-[60%] flex-1 rounded-lg border border-white/10 bg-zinc-800/60 px-2 text-xs text-zinc-100 outline-none transition-colors enabled:hover:border-white/20 disabled:cursor-not-allowed"
                 >
                   <option value="auto">
                     {detectedLogo ? `Auto (${detectedLogo.name})` : "Auto (not detected)"}
@@ -265,7 +265,7 @@ export function Sidebar({
 
             <div className={["mt-4", captionDirectionSupported ? "" : "opacity-45"].join(" ")}>
               <UiSubheading>Caption side</UiSubheading>
-              <div className="relative flex gap-[3px] rounded-lg border border-white/10 bg-zinc-950 p-[3px]">
+              <div className="relative flex gap-[3px] rounded-lg border border-white/10 bg-zinc-800/60 p-[3px]">
                 <span
                   className="absolute inset-y-[3px] left-[3px] w-[calc((100%-9px)/2)] rounded-md border border-white/10 bg-zinc-800 shadow-sm transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] data-[pos=right]:translate-x-[calc(100%+3px)]"
                   data-pos={captionDirection === "rtl" ? "right" : "left"}
@@ -384,7 +384,7 @@ export function Sidebar({
             <div
               role="radiogroup"
               aria-label="Format"
-              className="flex gap-0.5 rounded-lg border border-white/10 bg-zinc-950 p-0.5"
+              className="flex gap-0.5 rounded-lg border border-white/10 bg-zinc-800/60 p-0.5"
             >
               {(["jpg", "png"] as const).map((value) => (
                 <button

@@ -69,7 +69,7 @@ export function UiField({
         disabled={disabled}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full min-w-0 rounded-lg border border-white/10 bg-zinc-950 px-2.5 py-2 text-xs tabular-nums text-zinc-100 outline-none transition-colors placeholder:text-zinc-600 enabled:hover:border-white/20 disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full min-w-0 rounded-lg border border-white/10 bg-zinc-800/60 px-2.5 py-2 text-xs tabular-nums text-zinc-100 outline-none transition-colors placeholder:text-zinc-600 enabled:hover:border-white/20 enabled:hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
       />
     </label>
   );
