@@ -100,6 +100,8 @@ function createSpec(
       if (hasHeader) {
         const centerY = cursor + headerH / 2;
         const logoW = showLogo && options.logo ? logoWidth(logoH, options.logo.aspect) : 0;
+        // Resizing the canvas resets ctx state, so set the font before measuring
+        ctx.font = `600 ${modelSize}px ${font}`;
         const nameW = model ? ctx.measureText(model).width : 0;
         const brandW = logoW + nameW + (logoW && model ? gapXHalf + 1 + gapXHalf : 0);
         let x = rtl ? rightEdge - brandW : leftEdge;
