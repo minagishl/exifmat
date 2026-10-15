@@ -51,6 +51,8 @@ const CAPTION_DIRECTION_SUPPORTED = new Set<TemplateId>([
   "split-white",
   "minimal",
   "sidebar",
+  "spec-white",
+  "spec-dark",
   "overlay",
   "overlay-gallery",
   "overlay-gallery-lens",

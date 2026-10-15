@@ -146,6 +146,19 @@ export const CrestLayout = {
   bandPadPercent: 4 satisfies Even,
 } as const;
 
+/**
+ * Spec — header row (brand · date) over a grid of labelled exposure columns.
+ * Percents of the image short side unless noted.
+ */
+export const SpecLayout = {
+  /** Mat around the photo: % */
+  matPercent: 4 satisfies Even,
+  /** Inner pad above the header and below the last row: % */
+  padPercent: 4 satisfies Even,
+  /** Column label type: % of the value size */
+  labelOfValuePercent: 60 satisfies Even,
+} as const;
+
 /** measureText fallbacks when bounding-box metrics are missing */
 export const GlyphFallback = {
   ascentPercent: 70 satisfies Even,
@@ -168,6 +181,7 @@ assertEvenTokens("SidebarLayout", SidebarLayout);
 assertEvenTokens("MinimalLayout", MinimalLayout);
 assertEvenTokens("CardLayout", CardLayout);
 assertEvenTokens("CrestLayout", CrestLayout);
+assertEvenTokens("SpecLayout", SpecLayout);
 assertEvenTokens("GlyphFallback", GlyphFallback);
 
 export interface StripSpacing {

@@ -6,6 +6,7 @@ import { sidebar } from "./sidebar";
 import { minimal } from "./minimal";
 import { card } from "./card";
 import { crestDark, crestWhite } from "./crest";
+import { specDark, specWhite } from "./spec";
 import {
   overlay,
   overlayCenter,
@@ -35,6 +36,8 @@ function registerBuiltins(): void {
     card,
     crestWhite,
     crestDark,
+    specWhite,
+    specDark,
     overlay,
     overlayCenter,
     overlayGallery,
@@ -88,6 +91,8 @@ export {
   card,
   crestWhite,
   crestDark,
+  specWhite,
+  specDark,
   overlay,
   overlayCenter,
   overlayGallery,

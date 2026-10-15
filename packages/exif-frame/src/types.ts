@@ -15,6 +15,8 @@ export type TemplateId =
   | "card"
   | "crest-white"
   | "crest-dark"
+  | "spec-white"
+  | "spec-dark"
   | "overlay"
   | "overlay-center"
   | "overlay-gallery"

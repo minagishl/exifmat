@@ -87,6 +87,16 @@ export function cameraLineFromContext(renderCtx: TemplateRenderContext): string 
   });
 }
 
+/** Focal / aperture / shutter / ISO strings enabled by `fields`, in caption order */
+export function settingsParts(exif: NormalizedExif, fields: ExifField[]): string[] {
+  const parts: string[] = [];
+  if (fields.includes("focalLength") && exif.focalLength) parts.push(exif.focalLength);
+  if (fields.includes("aperture") && exif.aperture) parts.push(exif.aperture);
+  if (fields.includes("shutter") && exif.shutterSpeed) parts.push(exif.shutterSpeed);
+  if (fields.includes("iso") && exif.iso) parts.push(exif.iso.replace(/\s+/g, ""));
+  return parts;
+}
+
 export function lensLine(exif: NormalizedExif, fields: ExifField[]): string {
   if (!fields.includes("lens")) return "";
   return exif.lens ?? "";
