@@ -6,6 +6,8 @@ import {
   MinimalLayout,
   statusDateTimeTokens,
   xForInkLeft,
+  logoHeight,
+  logoWidth,
 } from "./layout";
 import { activeFields, cameraLineFromContext, defaultFont, drawLogo, lensLine } from "./utils";
 
@@ -181,8 +183,8 @@ function createSplit(
       let logoH = 0;
       let logoW = 0;
       if (showLogo && options.logo) {
-        logoH = Math.max(1, Math.round(primaryBand.height));
-        logoW = logoH * options.logo.aspect;
+        logoH = logoHeight(primaryBand);
+        logoW = logoWidth(logoH, options.logo.aspect);
       }
 
       // One rhythm: logo · gap · | · gap · mm · gap · f · …

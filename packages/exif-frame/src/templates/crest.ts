@@ -7,6 +7,8 @@ import {
   overlaySpacing,
   statusDateTimeTokens,
   xForInkLeft,
+  logoHeight,
+  logoWidth,
 } from "./layout";
 import { activeFields, cameraLineFromContext, defaultFont, drawLogo } from "./utils";
 
@@ -49,7 +51,7 @@ function createCrest(
 
       ctx.font = `600 ${modelSize}px ${font}`;
       const logoBand = measureBand(ctx, "Hg", modelSize);
-      const logoH = Math.max(1, Math.round(logoBand.height));
+      const logoH = logoHeight(logoBand);
 
       const fields = activeFields(rc);
       const model = cameraLineFromContext(rc);
@@ -103,7 +105,7 @@ function createCrest(
       ctx.drawImage(image, matX, photoY, imageWidth, imageHeight);
 
       if (showLogo && options.logo) {
-        const logoW = logoH * options.logo.aspect;
+        const logoW = logoWidth(logoH, options.logo.aspect);
         await drawLogo(rc, centerX - logoW / 2, bandPad, logoH, ink);
       }
 

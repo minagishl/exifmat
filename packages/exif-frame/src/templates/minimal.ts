@@ -7,6 +7,8 @@ import {
   MinimalLayout,
   statusDateTimeTokens,
   xForInkLeft,
+  logoHeight,
+  logoWidth,
 } from "./layout";
 import { activeFields, cameraLineFromContext, defaultFont, drawLogo, lensLine } from "./utils";
 
@@ -92,13 +94,13 @@ export const minimal: TemplateRenderer = {
       ctx.font = `600 ${primarySize}px ${font}`;
       const sample = model || "Hg";
       const band = measureBand(ctx, sample, primarySize);
-      const logoH = Math.max(1, Math.round(band.height));
+      const logoH = logoHeight(band);
       const groupTop = topCenter - logoH / 2;
       const baseline = baselineAtCenter(topCenter, band.ascent, band.descent);
 
       let brandW = model ? ctx.measureText(model).width : 0;
       if (options.showLogo && options.logo) {
-        brandW += logoH * options.logo.aspect + gapHalf + (model ? 1 + gapHalf : 0);
+        brandW += logoWidth(logoH, options.logo.aspect) + gapHalf + (model ? 1 + gapHalf : 0);
       }
       let x = rtl ? brandEdge - brandW : brandEdge;
 

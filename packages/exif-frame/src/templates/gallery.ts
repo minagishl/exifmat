@@ -9,6 +9,8 @@ import {
   galleryBrandModelSize,
   stripSpacing,
   xForInkLeft,
+  logoHeight,
+  logoWidth,
 } from "./layout";
 import { activeFields, cameraLineFromContext, defaultFont, drawLogo, lensLine } from "./utils";
 
@@ -43,10 +45,11 @@ function brandGroupWidth(
   const { ctx, options } = rc;
   ctx.font = `${opts.modelWeight} ${opts.modelSize}px ${opts.font}`;
   const band = measureBand(ctx, opts.model || "Hg", opts.modelSize);
-  const logoH = Math.max(1, Math.round(band.height));
+  const logoH = logoHeight(band);
   let width = opts.model ? ctx.measureText(opts.model).width : 0;
   if (options.showLogo && options.logo) {
-    width += logoH * options.logo.aspect + opts.gapHalf + (opts.model ? 1 + opts.gapHalf : 0);
+    width +=
+      logoWidth(logoH, options.logo.aspect) + opts.gapHalf + (opts.model ? 1 + opts.gapHalf : 0);
   }
   return { width, logoH, band };
 }

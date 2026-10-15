@@ -9,6 +9,8 @@ import {
   overlaySpacing,
   statusDateTimeTokens,
   xForInkLeft,
+  logoHeight,
+  logoWidth,
 } from "./layout";
 import { activeFields, cameraLineFromContext, defaultFont, drawLogo, roundRect } from "./utils";
 
@@ -110,8 +112,8 @@ export const card: TemplateRenderer = {
       ctx.font = `600 ${modelSize}px ${font}`;
       const sample = model || "Hg";
       const band = measureBand(ctx, sample, modelSize);
-      const logoH = showLogo ? Math.max(1, Math.round(band.height)) : 0;
-      const logoW = showLogo && options.logo ? logoH * options.logo.aspect : 0;
+      const logoH = showLogo ? logoHeight(band) : 0;
+      const logoW = showLogo && options.logo ? logoWidth(logoH, options.logo.aspect) : 0;
       const nameInk = model ? measureInkX(ctx, model) : null;
       const nameW = nameInk?.inkWidth ?? 0;
       // Overlay Gallery Lens: logo · gapXHalf · | · gapXHalf · name

@@ -11,6 +11,8 @@ import {
   overlaySpacing,
   statusDateTimeTokens,
   xForInkLeft,
+  logoHeight,
+  logoWidth,
 } from "./layout";
 import {
   activeFields,
@@ -294,8 +296,8 @@ async function drawOverlayClassicCaption(rc: TemplateRenderContext): Promise<voi
   if (options.showLogo && options.logo) {
     ctx.font = `600 ${titleSize}px ${font}`;
     const band = measureBand(ctx, camera || "Hg", titleSize);
-    const logoH = Math.max(1, Math.round(band.height));
-    const logoW = logoH * options.logo.aspect;
+    const logoH = logoHeight(band);
+    const logoW = logoWidth(logoH, options.logo.aspect);
     const logoX = rtl ? edge - logoW : edge;
     await drawLogo(rc, logoX, y - logoH, logoH, fg);
   }
@@ -422,13 +424,13 @@ function createOverlayGallery(withLens: boolean, withRule = false): TemplateRend
         ctx.font = `600 ${brandModelSize}px ${font}`;
         const sample = model || "Hg";
         const band = measureBand(ctx, sample, brandModelSize);
-        const logoH = Math.max(1, Math.round(band.height));
+        const logoH = logoHeight(band);
         const groupTop = brandCenter - logoH / 2;
         const baseline = baselineAtCenter(brandCenter, band.ascent, band.descent);
 
         let brandW = model ? ctx.measureText(model).width : 0;
         if (options.showLogo && options.logo) {
-          brandW += logoH * options.logo.aspect + gapXHalf + (model ? 1 + gapXHalf : 0);
+          brandW += logoWidth(logoH, options.logo.aspect) + gapXHalf + (model ? 1 + gapXHalf : 0);
         }
         let x = rtl ? brandEdge - brandW : brandEdge;
 
@@ -554,8 +556,8 @@ function createOverlayCenter(): TemplateRenderer {
 
       ctx.font = `600 ${titleSize}px ${font}`;
       const titleBand = measureBand(ctx, camera || "Hg", titleSize);
-      const logoH = showLogo ? Math.max(1, Math.round(titleBand.height)) : 0;
-      const logoW = showLogo && options.logo ? logoH * options.logo.aspect : 0;
+      const logoH = showLogo ? logoHeight(titleBand) : 0;
+      const logoW = showLogo && options.logo ? logoWidth(logoH, options.logo.aspect) : 0;
 
       type Row =
         | { kind: "logo"; size: number }
@@ -675,13 +677,13 @@ function createOverlayGlass(): TemplateRenderer {
         ctx.font = `${modelWeight} ${brandModelSize}px ${font}`;
         const sample = model || "Hg";
         const band = measureBand(ctx, sample, brandModelSize);
-        const logoH = Math.max(1, Math.round(band.height));
+        const logoH = logoHeight(band);
         const groupTop = brandCenter - logoH / 2;
         const baseline = baselineAtCenter(brandCenter, band.ascent, band.descent);
 
         let brandW = model ? ctx.measureText(model).width : 0;
         if (options.showLogo && options.logo) {
-          brandW += logoH * options.logo.aspect + gapXHalf + (model ? 1 + gapXHalf : 0);
+          brandW += logoWidth(logoH, options.logo.aspect) + gapXHalf + (model ? 1 + gapXHalf : 0);
         }
         let x = rtl ? brandEdge - brandW : brandEdge;
 
@@ -887,13 +889,13 @@ function createOverlayGlassDate(): TemplateRenderer {
         ctx.font = `${modelWeight} ${brandModelSize}px ${font}`;
         const sample = model || "Hg";
         const band = measureBand(ctx, sample, brandModelSize);
-        const logoH = Math.max(1, Math.round(band.height));
+        const logoH = logoHeight(band);
         const groupTop = brandCenter - logoH / 2;
         const baseline = baselineAtCenter(brandCenter, band.ascent, band.descent);
 
         let brandW = model ? ctx.measureText(model).width : 0;
         if (options.showLogo && options.logo) {
-          brandW += logoH * options.logo.aspect + gapXHalf + (model ? 1 + gapXHalf : 0);
+          brandW += logoWidth(logoH, options.logo.aspect) + gapXHalf + (model ? 1 + gapXHalf : 0);
         }
         let x = rtl ? brandEdge - brandW : brandEdge;
 

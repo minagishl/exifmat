@@ -2,7 +2,7 @@ import type { ExifField, NormalizedExif, TemplateRenderContext } from "../types"
 import { formatCamera, formatSettingsLine } from "../exif";
 import { loadLogoImage } from "../logos";
 import { getCanvasEnvironment } from "../canvas";
-import { statusDateTimeTokens } from "./layout";
+import { logoWidth, statusDateTimeTokens } from "./layout";
 
 export function roundRect(
   ctx: CanvasRenderingContext2D,
@@ -114,7 +114,7 @@ export async function drawLogo(
   const logo = renderCtx.options.logo;
   if (!renderCtx.options.showLogo || !logo) return 0;
 
-  const width = height * logo.aspect;
+  const width = logoWidth(height, logo.aspect);
   try {
     const envLoad = async (src: string) => {
       // Prefer DOM Image when available (browser)

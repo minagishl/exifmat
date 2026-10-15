@@ -9,6 +9,8 @@ import {
   StackLayout,
   statusDateTimeTokens,
   xForInkLeft,
+  logoHeight,
+  logoWidth,
 } from "./layout";
 import {
   activeFields,
@@ -84,8 +86,8 @@ function createStack(
 
       ctx.font = `600 ${titleSize}px ${font}`;
       const titleBand = measureBand(ctx, camera || "Hg", titleSize);
-      const logoH = showLogo ? Math.max(1, Math.round(titleBand.height)) : 0;
-      const logoW = showLogo && options.logo ? logoH * options.logo.aspect : 0;
+      const logoH = showLogo ? logoHeight(titleBand) : 0;
+      const logoW = showLogo && options.logo ? logoWidth(logoH, options.logo.aspect) : 0;
       // Ink width (not advance) so centering matches the optically corrected draw
       const nameInk = camera ? measureInkX(ctx, camera) : null;
       const nameW = nameInk?.inkWidth ?? 0;

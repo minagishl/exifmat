@@ -191,6 +191,16 @@ export function evenPx(value: number, min = 2, step = 2): number {
   return Math.max(min, snapped);
 }
 
+/** Logo height: glyph band snapped to an even pixel count */
+export function logoHeight(band: { height: number }): number {
+  return evenPx(band.height);
+}
+
+/** Logo width from an even height and the logo aspect, snapped to an even pixel count */
+export function logoWidth(height: number, aspect: number): number {
+  return evenPx(height * aspect);
+}
+
 /** Gallery status-bar spacing derived from strip height */
 export function stripSpacing(strip: number): StripSpacing {
   // Multiple of 8 so gapX/2 and gapX/4 stay even integers
@@ -258,7 +268,7 @@ export function measureBand(
 
 /** Alphabetic baseline so the glyph band is centered on `centerY` */
 export function baselineAtCenter(centerY: number, ascent: number, descent: number): number {
-  return centerY + (ascent - descent) / 2;
+  return Math.round(centerY + (ascent - descent) / 2);
 }
 
 /**
@@ -285,7 +295,7 @@ export function measureInkX(
  * Closes the extra gap from fonts with a positive left side bearing.
  */
 export function xForInkLeft(ctx: CanvasRenderingContext2D, text: string, inkLeftX: number): number {
-  return inkLeftX + (ctx.measureText(text).actualBoundingBoxLeft ?? 0);
+  return Math.round(inkLeftX + (ctx.measureText(text).actualBoundingBoxLeft ?? 0));
 }
 
 /**

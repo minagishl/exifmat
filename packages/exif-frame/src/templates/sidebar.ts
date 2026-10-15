@@ -6,6 +6,7 @@ import {
   overlaySpacing,
   SidebarLayout,
   statusDateTimeTokens,
+  logoHeight,
 } from "./layout";
 import {
   activeFields,
@@ -61,7 +62,7 @@ export const sidebar: TemplateRenderer = {
     const showLogo = Boolean(options.showLogo && options.logo);
     ctx.font = `600 ${titleSize}px ${font}`;
     const titleBand = measureBand(ctx, camera || "Hg", titleSize);
-    const logoH = showLogo ? Math.max(1, Math.round(titleBand.height)) : 0;
+    const logoH = showLogo ? logoHeight(titleBand) : 0;
 
     type Row =
       | { kind: "logo"; size: number }
