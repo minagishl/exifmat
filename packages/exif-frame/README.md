@@ -119,6 +119,18 @@ registerTemplate({
 
 When `showLogo` is enabled, EXIF `Make` is matched to a bundled wordmark (Canon, Nikon, Sony, Fujifilm, Leica, Olympus / OM System, Panasonic, Apple, Google, Ricoh, Hasselblad, DJI).
 
+To pin a specific logo instead of matching it from EXIF (for example when the make is missing or unrecognized), pass `logoId` with an `id` from `listLogos()`:
+
+```ts
+import { createFrame, listLogos } from "exif-frame";
+
+console.log(listLogos().map((l) => l.id)); // ["alpa", "apple", ..., "sony", ...]
+
+await createFrame({ image, options: { showLogo: true, logoId: "sony" } });
+```
+
+Unknown ids fall back to EXIF matching.
+
 By default logos are tinted to the frame text color. Set `colorLogo: true` to keep each brand’s original colors (e.g. Canon red).
 
 With a logo visible, `stripBrandFromModel` (default `true`) removes the brand from the camera line so you get logo + `EOS R7` rather than logo + `Canon EOS R7`. Set it to `false` to keep the full model string.

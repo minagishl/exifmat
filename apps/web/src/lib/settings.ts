@@ -7,6 +7,8 @@ export interface StoredSettings {
   template: string;
   showLogo: boolean;
   colorLogo: boolean;
+  /** Bundled logo id, or "auto" to match from EXIF */
+  logoId: string;
   stripBrandFromModel: boolean;
   fields: ExifField[];
   quality: number;
@@ -18,6 +20,7 @@ export interface StoredSettings {
 export function loadSettings(
   validTemplates: readonly string[],
   allFields: readonly ExifField[],
+  validLogos: readonly string[] = [],
 ): Partial<StoredSettings> {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -27,6 +30,12 @@ export function loadSettings(
 
     if (typeof data.template === "string" && validTemplates.includes(data.template)) {
       out.template = data.template;
+    }
+    if (
+      typeof data.logoId === "string" &&
+      (data.logoId === "auto" || validLogos.includes(data.logoId))
+    ) {
+      out.logoId = data.logoId;
     }
     for (const key of ["showLogo", "colorLogo", "stripBrandFromModel"] as const) {
       if (typeof data[key] === "boolean") out[key] = data[key];

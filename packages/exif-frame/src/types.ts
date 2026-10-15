@@ -78,6 +78,11 @@ export interface CreateFrameOptions extends FrameStyleOptions {
   /** Show manufacturer logo when available (default: true) */
   showLogo?: boolean;
   /**
+   * Use a specific bundled logo (an `id` from `listLogos()`, e.g. `"sony"`)
+   * instead of matching it from EXIF. Unknown ids fall back to EXIF matching.
+   */
+  logoId?: string;
+  /**
    * Keep the logo’s original brand colors instead of tinting it to the
    * frame text color. Default: false (monochrome tint).
    */

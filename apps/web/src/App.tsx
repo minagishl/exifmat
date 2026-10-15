@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
 import {
   createFrame,
+  listLogos,
   listTemplates,
   parseExif,
   type CaptionDirection,
@@ -86,9 +87,12 @@ function useDebouncedValue<T>(value: T, delay: number): T {
 const templates = listTemplates();
 
 /** Options remembered from the previous visit (validated against what exists now). */
+const logos = listLogos();
+
 const saved = loadSettings(
   templates.map((t) => t.id),
   ALL_FIELDS,
+  logos.map((l) => l.id),
 );
 
 function baseName(name: string): string {
@@ -111,6 +115,7 @@ export default function App() {
   );
   const [showLogo, setShowLogo] = useState(saved.showLogo ?? true);
   const [colorLogo, setColorLogo] = useState(saved.colorLogo ?? false);
+  const [logoId, setLogoId] = useState(saved.logoId ?? "auto");
   const [stripBrandFromModel, setStripBrandFromModel] = useState(saved.stripBrandFromModel ?? true);
   const [fields, setFields] = useState<ExifField[]>(
     () => saved.fields ?? defaultFieldsFor((saved.template as TemplateId) ?? "gallery-dark"),
@@ -145,6 +150,7 @@ export default function App() {
       template,
       showLogo,
       colorLogo,
+      logoId,
       stripBrandFromModel,
       fields,
       quality,
@@ -155,6 +161,7 @@ export default function App() {
     template,
     showLogo,
     colorLogo,
+    logoId,
     stripBrandFromModel,
     fields,
     quality,
@@ -221,6 +228,7 @@ export default function App() {
           options: {
             showLogo,
             colorLogo,
+            logoId: logoId === "auto" ? undefined : logoId,
             stripBrandFromModel,
             fields,
             exif,
@@ -256,6 +264,7 @@ export default function App() {
     template,
     showLogo,
     colorLogo,
+    logoId,
     stripBrandFromModel,
     fields,
     exif,
@@ -300,6 +309,7 @@ export default function App() {
       options: {
         showLogo,
         colorLogo,
+        logoId: logoId === "auto" ? undefined : logoId,
         stripBrandFromModel,
         fields,
         exif: exifOverride,
@@ -402,6 +412,9 @@ export default function App() {
       onShowLogoChange={setShowLogo}
       colorLogo={colorLogo}
       onColorLogoChange={setColorLogo}
+      logoId={logoId}
+      onLogoIdChange={setLogoId}
+      logos={logos}
       stripBrandFromModel={stripBrandFromModel}
       onStripBrandFromModelChange={setStripBrandFromModel}
       captionDirection={captionDirection}

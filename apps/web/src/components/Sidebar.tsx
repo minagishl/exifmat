@@ -1,7 +1,9 @@
 import { useRef, useState } from "react";
 import { IconBrandGithub, IconCheck, IconDownload, IconHelp } from "@tabler/icons-react";
+import { resolveLogo } from "exif-frame";
 import type {
   CaptionDirection,
+  LogoAsset,
   ExifField,
   NormalizedExif,
   TemplateId,
@@ -23,6 +25,10 @@ interface SidebarProps {
   onShowLogoChange: (v: boolean) => void;
   colorLogo: boolean;
   onColorLogoChange: (v: boolean) => void;
+  /** Selected logo id, or "auto" to match from EXIF. */
+  logoId: string;
+  onLogoIdChange: (id: string) => void;
+  logos: LogoAsset[];
   stripBrandFromModel: boolean;
   onStripBrandFromModelChange: (v: boolean) => void;
   captionDirection: CaptionDirection;
@@ -111,6 +117,9 @@ export function Sidebar({
   onShowLogoChange,
   colorLogo,
   onColorLogoChange,
+  logoId,
+  onLogoIdChange,
+  logos,
   stripBrandFromModel,
   onStripBrandFromModelChange,
   captionDirection,
@@ -143,6 +152,7 @@ export function Sidebar({
   };
 
   const infoRef = useRef<HTMLDialogElement>(null);
+  const detectedLogo = resolveLogo(exif);
   const qualityPct = Math.round(quality * 100);
   const busy = disabled || rendering;
   const [format, setFormat] = useState<"jpg" | "png">("jpg");
@@ -214,6 +224,29 @@ export function Sidebar({
                 disabled={disabled}
                 onChange={onShowLogoChange}
               />
+              <label
+                className={[
+                  "mb-1 flex items-center justify-between gap-3 py-1.5",
+                  disabled || !showLogo ? "opacity-40" : "",
+                ].join(" ")}
+              >
+                <span className="text-xs leading-5 text-zinc-300">Logo</span>
+                <select
+                  value={logoId}
+                  disabled={disabled || !showLogo}
+                  onChange={(e) => onLogoIdChange(e.target.value)}
+                  className="h-8 min-w-0 max-w-[60%] flex-1 rounded-lg border border-white/10 bg-zinc-950 px-2 text-xs text-zinc-100 outline-none transition-colors enabled:hover:border-white/20 disabled:cursor-not-allowed"
+                >
+                  <option value="auto">
+                    {detectedLogo ? `Auto (${detectedLogo.name})` : "Auto (not detected)"}
+                  </option>
+                  {logos.map((logo) => (
+                    <option key={logo.id} value={logo.id}>
+                      {logo.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
               <UiToggle
                 label="Color logo"
                 checked={colorLogo}

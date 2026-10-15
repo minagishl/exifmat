@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { resolveLogo, listLogos } from "./index";
+import { resolveLogo, listLogos, logos } from "./index";
 import { formatCamera, formatSettingsLine, stripBrandFromModel } from "../exif";
 import type { NormalizedExif } from "../types";
 
@@ -64,5 +64,15 @@ describe("format helpers", () => {
     expect(formatSettingsLine(exif, ["iso", "shutter", "focalLength", "aperture"])).toBe(
       "50mm · f/1.2 · 1/500s · ISO 800",
     );
+  });
+});
+
+describe("logos.get", () => {
+  test("returns a bundled logo by id", () => {
+    expect(logos.get("sony")?.name).toBe("Sony");
+  });
+
+  test("returns null for an unknown id", () => {
+    expect(logos.get("nope")).toBeNull();
   });
 });

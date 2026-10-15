@@ -6,7 +6,7 @@ import type {
   NormalizedExif,
 } from "./types";
 import { parseExif } from "./exif";
-import { resolveLogo } from "./logos";
+import { logos, resolveLogo } from "./logos";
 import { getCanvasEnvironment } from "./canvas";
 import { getTemplate, listTemplates } from "./templates";
 import { defaultFont } from "./templates/utils";
@@ -166,7 +166,9 @@ export async function createFrame(input: CreateFrameInput): Promise<FrameResult>
     imageHeight = scaled.height;
   }
 
-  const logo = options.showLogo ? resolveLogo(exif) : null;
+  const logo = options.showLogo
+    ? ((options.logoId ? logos.get(options.logoId) : null) ?? resolveLogo(exif))
+    : null;
 
   const canvas = env.createCanvas(imageWidth, imageHeight);
   const ctx = canvas.getContext("2d");
