@@ -159,6 +159,17 @@ export const SpecLayout = {
   labelOfValuePercent: 60 satisfies Even,
 } as const;
 
+/**
+ * Rail — caption set vertically in a slim column beside the photo.
+ * Percents of the image short side.
+ */
+export const RailLayout = {
+  /** Mat around the photo: % */
+  matPercent: 6 satisfies Even,
+  /** Space between the photo and the caption column: % */
+  railGapPercent: 4 satisfies Even,
+} as const;
+
 /** measureText fallbacks when bounding-box metrics are missing */
 export const GlyphFallback = {
   ascentPercent: 70 satisfies Even,
@@ -182,6 +193,7 @@ assertEvenTokens("MinimalLayout", MinimalLayout);
 assertEvenTokens("CardLayout", CardLayout);
 assertEvenTokens("CrestLayout", CrestLayout);
 assertEvenTokens("SpecLayout", SpecLayout);
+assertEvenTokens("RailLayout", RailLayout);
 assertEvenTokens("GlyphFallback", GlyphFallback);
 
 export interface StripSpacing {

@@ -90,6 +90,8 @@ const buffer = await result.toBuffer("image/png");
 | `crest-dark`           | Logo above photo; camera + exposure below (dark mat)                    |
 | `spec-white`           | Brand header over a labelled focal / aperture / shutter / ISO grid      |
 | `spec-dark`            | Same grid on a dark mat                                                 |
+| `rail-white`           | Caption set vertically in a slim column beside the photo                |
+| `rail-dark`            | Same column on a dark mat                                               |
 | `overlay`              | Full-bleed stacked caption on a soft gradient                           |
 | `overlay-center`       | Full-bleed centered stack (logo → name → details) on a soft gradient    |
 | `overlay-gallery`      | Overlay caption in Gallery layout                                       |

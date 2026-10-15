@@ -2,7 +2,15 @@ import { useMemo } from "react";
 import { ui } from "../lib/ui";
 import type { TemplateId, TemplateRenderer } from "exif-frame";
 
-type FrameCategory = "gallery" | "overlay" | "stack" | "split" | "crest" | "spec" | "other";
+type FrameCategory =
+  | "gallery"
+  | "overlay"
+  | "stack"
+  | "split"
+  | "crest"
+  | "spec"
+  | "rail"
+  | "other";
 
 const CATEGORY_ORDER: { key: FrameCategory; label: string }[] = [
   { key: "gallery", label: "Gallery" },
@@ -11,6 +19,7 @@ const CATEGORY_ORDER: { key: FrameCategory; label: string }[] = [
   { key: "split", label: "Split" },
   { key: "crest", label: "Crest" },
   { key: "spec", label: "Spec" },
+  { key: "rail", label: "Rail" },
   { key: "other", label: "Other" },
 ];
 
@@ -21,6 +30,7 @@ function categoryForTemplate(id: string): FrameCategory {
   if (id.startsWith("split")) return "split";
   if (id.startsWith("crest")) return "crest";
   if (id.startsWith("spec")) return "spec";
+  if (id.startsWith("rail")) return "rail";
   return "other";
 }
 
@@ -106,6 +116,16 @@ function FrameThumb({ id }: { id: string }) {
         {line(19, 36.6, 8)}
         {line(34, 36.6, 8)}
         {line(47, 36.6, 5)}
+      </>
+    );
+  } else if (id.startsWith("rail")) {
+    body = (
+      <>
+        <rect width="60" height="40" fill={mat} />
+        <rect x="5" y="5" width="43" height="30" fill={photo} />
+        <rect x="52" y="14" width="1.4" height="21" rx="0.7" fill={ink} opacity="0.9" />
+        <rect x="55" y="22" width="1.4" height="13" rx="0.7" fill={ink} opacity="0.55" />
+        <circle cx="52.7" cy="10" r="1.5" fill={ink} />
       </>
     );
   } else if (id === "minimal") {

@@ -17,6 +17,8 @@ export type TemplateId =
   | "crest-dark"
   | "spec-white"
   | "spec-dark"
+  | "rail-white"
+  | "rail-dark"
   | "overlay"
   | "overlay-center"
   | "overlay-gallery"
