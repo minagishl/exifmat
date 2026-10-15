@@ -6,7 +6,7 @@ Conventions for agents working on this repository. Prefer these over inventing n
 
 - Product code, comments, UI strings, commits, and docs in this repo are **English only**.
 
-## Template layout (`packages/exif-frame/src/templates/`)
+## Template layout (`packages/exifmat/src/templates/`)
 
 Shared spacing lives in `layout.ts`. Gallery defines the rhythm; Overlay reuses it (with a slightly larger vertical gap). Minimal snaps metrics through `evenPx` as well.
 

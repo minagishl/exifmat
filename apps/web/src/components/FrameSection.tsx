@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { ui } from "../lib/ui";
-import type { TemplateId, TemplateRenderer } from "exif-frame";
+import type { TemplateId, TemplateRenderer } from "exifmat";
 
 type FrameCategory =
   | "gallery"

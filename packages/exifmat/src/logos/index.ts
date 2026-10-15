@@ -12,7 +12,7 @@ const KNOCKOUT_IDS = new Set(["leica", "xiaomi"]);
 
 const WHITE_SHAPE =
   /<(?:path|circle|rect|ellipse|polygon)\b[^>]*\bfill="(?:#fff(?:fff)?|white)"[^>]*>/gi;
-const KNOCKOUT_MASK_ID = "exif-frame-knockout";
+const KNOCKOUT_MASK_ID = "exifmat-knockout";
 
 function buildLogo(id: string): LogoAsset | null {
   const entry = LOGO_SVGS[id];

@@ -8,7 +8,7 @@ import {
   type ExifField,
   type NormalizedExif,
   type TemplateId,
-} from "exif-frame";
+} from "exifmat";
 import { ImagePanel } from "./components/ImagePanel";
 import {
   clampSidebarWidth,
@@ -385,7 +385,7 @@ export default function App() {
       const url = URL.createObjectURL(createZip(entries));
       const a = document.createElement("a");
       a.href = url;
-      a.download = "exif-frame.zip";
+      a.download = "exifmat.zip";
       a.click();
       URL.revokeObjectURL(url);
     } catch (err) {

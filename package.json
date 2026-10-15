@@ -1,5 +1,5 @@
 {
-  "name": "exif-frame-monorepo",
+  "name": "exifmat-monorepo",
   "private": true,
   "workspaces": [
     "packages/*",
@@ -7,10 +7,10 @@
   ],
   "scripts": {
     "dev": "bun run --filter web dev",
-    "build": "bun run --filter exif-frame build && bun run --filter web build",
-    "build:lib": "bun run --filter exif-frame build",
-    "typecheck": "bun run --filter exif-frame typecheck && bun run build:lib && bun run --filter web typecheck",
-    "test": "bun run --filter exif-frame test",
+    "build": "bun run --filter exifmat build && bun run --filter web build",
+    "build:lib": "bun run --filter exifmat build",
+    "typecheck": "bun run --filter exifmat typecheck && bun run build:lib && bun run --filter web typecheck",
+    "test": "bun run --filter exifmat test",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "fmt": "oxfmt",

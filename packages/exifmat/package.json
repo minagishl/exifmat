@@ -1,5 +1,5 @@
 {
-  "name": "exif-frame",
+  "name": "exifmat",
   "version": "0.1.0",
   "description": "Lightweight EXIF photo frame generator for browser and Node.js / Bun",
   "keywords": [
@@ -10,15 +10,15 @@
     "photo",
     "photography"
   ],
-  "homepage": "https://github.com/minagishl/exif-frame#readme",
+  "homepage": "https://github.com/minagishl/exifmat#readme",
   "bugs": {
-    "url": "https://github.com/minagishl/exif-frame/issues"
+    "url": "https://github.com/minagishl/exifmat/issues"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/minagishl/exif-frame.git",
-    "directory": "packages/exif-frame"
+    "url": "git+https://github.com/minagishl/exifmat.git",
+    "directory": "packages/exifmat"
   },
   "files": [
     "dist",

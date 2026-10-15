@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: packages/exif-frame
+        working-directory: packages/exifmat
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,7 +38,7 @@ jobs:
         working-directory: .
         run: |
           TAG="${GITHUB_REF_NAME#v}"
-          PKG_VERSION="$(node -p "require('./packages/exif-frame/package.json').version")"
+          PKG_VERSION="$(node -p "require('./packages/exifmat/package.json').version")"
           if [ "$TAG" != "$PKG_VERSION" ]; then
             echo "Tag v$TAG does not match package version $PKG_VERSION"
             exit 1

@@ -14,7 +14,7 @@ function candidatePaths(): string[] {
     // src/canvas or dist/canvas → ../../assets/fonts
     join(here, "../../assets/fonts/InterVariable.ttf"),
     join(process.cwd(), "assets/fonts/InterVariable.ttf"),
-    join(process.cwd(), "packages/exif-frame/assets/fonts/InterVariable.ttf"),
+    join(process.cwd(), "packages/exifmat/assets/fonts/InterVariable.ttf"),
   ];
 }
 
@@ -43,13 +43,13 @@ export async function ensureInterFontRegistered(): Promise<boolean> {
     if (!GlobalFonts.has(FAMILY)) {
       const fontPath = findInterFontFile();
       if (!fontPath) {
-        console.warn("[exif-frame] InterVariable.ttf not found; canvas text will use system fonts");
+        console.warn("[exifmat] InterVariable.ttf not found; canvas text will use system fonts");
         return false;
       }
 
       const key = GlobalFonts.registerFromPath(fontPath, FAMILY);
       if (!key) {
-        console.warn("[exif-frame] Failed to register Inter Variable font");
+        console.warn("[exifmat] Failed to register Inter Variable font");
         return false;
       }
     }

@@ -59,4 +59,4 @@ await Bun.write(
   `export async function createNodeEnvironment() {\n  throw new Error('Node canvas adapter is not available in the browser');\n}\n`,
 );
 
-console.log("Built exif-frame → dist/");
+console.log("Built exifmat → dist/");

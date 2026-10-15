@@ -1,4 +1,4 @@
-import { DEFAULT_FONT_FAMILY } from "exif-frame";
+import { DEFAULT_FONT_FAMILY } from "exifmat";
 
 /** Canvas / CSS font stack — same as the library default (Inter Variable) */
 export const FRAME_FONT_FAMILY = DEFAULT_FONT_FAMILY;

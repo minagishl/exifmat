@@ -1,6 +1,6 @@
-# EXIF Frame demo
+# exifmat demo
 
-Vite + React + Tailwind demo for the `exif-frame` package.
+Vite + React + Tailwind demo for the `exifmat` package.
 
 ```bash
 # from repo root

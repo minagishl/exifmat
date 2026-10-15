@@ -11,7 +11,7 @@ import { resolve } from "node:path";
  */
 function logoSvgAsText(): Plugin {
   return {
-    name: "exif-frame-logo-svg-text",
+    name: "exifmat-logo-svg-text",
     enforce: "pre",
     async load(id) {
       const file = id.split("?")[0] ?? id;
@@ -27,7 +27,7 @@ export default defineConfig({
   plugins: [logoSvgAsText(), react(), tailwindcss()],
   resolve: {
     alias: {
-      "exif-frame": resolve(__dirname, "../../packages/exif-frame/src/index.ts"),
+      exifmat: resolve(__dirname, "../../packages/exifmat/src/index.ts"),
     },
   },
   server: {

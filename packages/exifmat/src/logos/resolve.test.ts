@@ -122,7 +122,7 @@ describe("loadLogoImage tint", () => {
   test("white lettering is cut out of a flat shape instead of filling it", async () => {
     const svg = await tinted("leica", false);
     expect(svg).toContain("<mask");
-    expect(svg).toContain('mask="url(#exif-frame-knockout)"');
+    expect(svg).toContain('mask="url(#exifmat-knockout)"');
   });
 
   test("color mode keeps the brand fills", async () => {

@@ -1,4 +1,4 @@
-import { isRawExtension, RAW_EXTENSIONS } from "exif-frame";
+import { isRawExtension, RAW_EXTENSIONS } from "exifmat";
 
 const RASTER_MIME =
   /^(image\/(jpeg|png|webp|gif|bmp|heic|heif|tiff|x-adobe-dng|x-canon-cr2|x-canon-cr3|x-nikon-nef|x-sony-arw).*)$/i;

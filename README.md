@@ -1,10 +1,10 @@
-# EXIF Frame
+# exifmat
 
 Generate photo frames that show camera EXIF metadata — camera, lens, focal length, aperture, shutter speed, and ISO. The library runs in the **browser**, **Node.js**, and **Bun** using Canvas 2D (no DOM layout). This repository also includes a Vite + React demo; in the browser, framing happens entirely on your device.
 
 ## Features
 
-- **Layout templates** — gallery status bars, mats, stacked captions, glass overlays, and more ([full list](./packages/exif-frame/README.md#templates))
+- **Layout templates** — gallery status bars, mats, stacked captions, glass overlays, and more ([full list](./packages/exifmat/README.md#templates))
 - **Brand logos** — optional manufacturer wordmarks matched from EXIF `Make`
 - **RAW support** — frames embedded JPEG previews from common RAW containers (CR3, NEF, ARW, DNG, …) while reading EXIF from the original file
 - **Custom templates** — register your own renderers via the public API
@@ -24,8 +24,8 @@ Open [http://localhost:5173](http://localhost:5173), drop a photo, choose a temp
 ## Install
 
 ```bash
-npm install exif-frame
-# or: bun add exif-frame
+npm install exifmat
+# or: bun add exifmat
 ```
 
 For server-side rendering, add the optional peer:
@@ -37,7 +37,7 @@ npm install @napi-rs/canvas
 ## Quick start
 
 ```ts
-import { createFrame } from "exif-frame";
+import { createFrame } from "exifmat";
 
 const framed = await createFrame({
   image: photoFile, // JPEG, PNG, WebP, or RAW preview source
@@ -48,14 +48,14 @@ const framed = await createFrame({
 await framed.toBlob("image/jpeg");
 ```
 
-See [`packages/exif-frame/README.md`](./packages/exif-frame/README.md) for every template, logo behavior, field options, and export helpers.
+See [`packages/exifmat/README.md`](./packages/exifmat/README.md) for every template, logo behavior, field options, and export helpers.
 
 ## Repository layout
 
-| Path                                           | Description                      |
-| ---------------------------------------------- | -------------------------------- |
-| [`packages/exif-frame`](./packages/exif-frame) | Publishable `exif-frame` library |
-| [`apps/web`](./apps/web)                       | Demo app (Vite, React, Tailwind) |
+| Path                                     | Description                      |
+| ---------------------------------------- | -------------------------------- |
+| [`packages/exifmat`](./packages/exifmat) | Publishable `exifmat` library    |
+| [`apps/web`](./apps/web)                 | Demo app (Vite, React, Tailwind) |
 
 ## Develop
 
@@ -74,9 +74,9 @@ bun run fmt:check
 
 ## Releasing (maintainers)
 
-Pushing a version tag publishes `exif-frame` to npm via GitHub Actions **Trusted Publishing** (OIDC), then creates a GitHub Release when the publish succeeds.
+Pushing a version tag publishes `exifmat` to npm via GitHub Actions **Trusted Publishing** (OIDC), then creates a GitHub Release when the publish succeeds.
 
-1. Bump `version` in [`packages/exif-frame/package.json`](./packages/exif-frame/package.json) and commit.
+1. Bump `version` in [`packages/exifmat/package.json`](./packages/exifmat/package.json) and commit.
 2. Tag and push (the tag without the `v` prefix must match the package version):
 
 ```bash
@@ -84,7 +84,7 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-Workflow: [`.github/workflows/publish.yml`](./.github/workflows/publish.yml). Configure npm Trusted Publishing once for this repository (`minagishl/exif-frame`, workflow file `publish.yml`); no long-lived `NPM_TOKEN` is required.
+Workflow: [`.github/workflows/publish.yml`](./.github/workflows/publish.yml). Configure npm Trusted Publishing once for this repository (`minagishl/exifmat`, workflow file `publish.yml`); no long-lived `NPM_TOKEN` is required.
 
 ## License
 

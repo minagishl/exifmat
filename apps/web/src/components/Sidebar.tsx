@@ -6,7 +6,7 @@ import {
   IconDownload,
   IconHelp,
 } from "@tabler/icons-react";
-import { resolveLogo } from "exif-frame";
+import { resolveLogo } from "exifmat";
 import type {
   CaptionDirection,
   LogoAsset,
@@ -14,13 +14,13 @@ import type {
   NormalizedExif,
   TemplateId,
   TemplateRenderer,
-} from "exif-frame";
+} from "exifmat";
 import { ui } from "../lib/ui";
 import { InfoDialog } from "./InfoDialog";
 import { FrameSection } from "./FrameSection";
 import { SidebarSection, UiField, UiParam, UiSubheading, UiToggle } from "./sidebar-ui";
 
-const GITHUB_HREF = "https://github.com/minagishl/exif-frame";
+const GITHUB_HREF = "https://github.com/minagishl/exifmat";
 const GITHUB_LABEL = "GitHub";
 
 interface SidebarProps {
@@ -206,7 +206,7 @@ export function Sidebar({
               target="_blank"
               rel="noreferrer"
               className={ui.btnOutline}
-              title="github.com/minagishl/exif-frame"
+              title="github.com/minagishl/exifmat"
             >
               <IconBrandGithub size={15} stroke={1.75} aria-hidden />
               <span>{GITHUB_LABEL}</span>

@@ -1,4 +1,4 @@
-# exif-frame
+# exifmat
 
 Lightweight EXIF photo frame generator for **browser**, **Node.js**, and **Bun**.
 
@@ -7,8 +7,8 @@ Draws photography frames with camera metadata on a Canvas 2D surface — no DOM 
 ## Install
 
 ```bash
-bun add exif-frame
-# or: npm install exif-frame
+bun add exifmat
+# or: npm install exifmat
 ```
 
 For server-side rendering, also install the optional canvas backend:
@@ -38,7 +38,7 @@ await createFrame({
 ## Quick start
 
 ```ts
-import { createFrame, parseExif } from "exif-frame";
+import { createFrame, parseExif } from "exifmat";
 
 const result = await createFrame({
   image: fileOrBuffer,
@@ -103,7 +103,7 @@ const buffer = await result.toBuffer("image/png");
 Register your own:
 
 ```ts
-import { registerTemplate } from "exif-frame";
+import { registerTemplate } from "exifmat";
 
 registerTemplate({
   id: "my-frame",
@@ -122,7 +122,7 @@ When `showLogo` is enabled, EXIF `Make` is matched to a bundled wordmark (Canon,
 To pin a specific logo instead of matching it from EXIF (for example when the make is missing or unrecognized), pass `logoId` with an `id` from `listLogos()`:
 
 ```ts
-import { createFrame, listLogos } from "exif-frame";
+import { createFrame, listLogos } from "exifmat";
 
 console.log(listLogos().map((l) => l.id)); // ["alpa", "apple", ..., "sony", ...]
 

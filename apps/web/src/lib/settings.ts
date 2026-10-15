@@ -1,6 +1,6 @@
-import type { CaptionDirection, ExifField } from "exif-frame";
+import type { CaptionDirection, ExifField } from "exifmat";
 
-const STORAGE_KEY = "exif-frame:settings:v1";
+const STORAGE_KEY = "exifmat:settings:v1";
 
 /** Options remembered between visits. Per-photo data (EXIF edits, files) is not stored. */
 export interface StoredSettings {
