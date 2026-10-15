@@ -4,8 +4,15 @@ import { LOGO_SVGS } from "./svgs";
 
 const logoCache = new Map<string, LogoAsset>();
 
-/** Brands that keep official multi-color fills when tinting for frames */
-const PRESERVE_COLORS = new Set(["google", "fujifilm", "leica", "gopro", "xiaomi"]);
+/**
+ * Marks built as a colored shape with white lettering. A flat tint would fill
+ * the whole shape, so their white parts are cut out of it instead.
+ */
+const KNOCKOUT_IDS = new Set(["leica", "xiaomi"]);
+
+const WHITE_SHAPE =
+  /<(?:path|circle|rect|ellipse|polygon)\b[^>]*\bfill="(?:#fff(?:fff)?|white)"[^>]*>/gi;
+const KNOCKOUT_MASK_ID = "exif-frame-knockout";
 
 function buildLogo(id: string): LogoAsset | null {
   const entry = LOGO_SVGS[id];
@@ -67,23 +74,48 @@ export interface LoadLogoOptions {
   colorLogo?: boolean;
 }
 
-/** Tint SVG for frame backgrounds (mono), unless brand colors should be kept */
+/**
+ * Tint SVG for frame backgrounds: mono by default, original brand fills when
+ * `colorLogo` is set. Shapes with no fill of their own (SVG's default is black)
+ * always follow `color`, so they stay visible on dark frames.
+ */
 function tintSvg(svg: string, color: string, id: string, colorLogo = false): string {
   // Always resolve currentColor so the logo is drawable on any background
   let out = svg.replace(/currentColor/g, color);
-  if (colorLogo || PRESERVE_COLORS.has(id)) return out;
+  out = out.replace(/<svg\b([^>]*)>/i, (tag, attrs: string) =>
+    /\sfill=/.test(attrs) ? tag : `<svg${attrs} fill="${color}">`,
+  );
+  if (colorLogo) return out;
+
+  const holes: string[] = [];
+  if (KNOCKOUT_IDS.has(id)) {
+    out = out.replace(WHITE_SHAPE, (shape) => {
+      holes.push(shape);
+      return "";
+    });
+  }
 
   out = out.replace(/\bfill=("(?!none|url\()[^"]*"|'(?!none|url\()[^']*')/gi, `fill="${color}"`);
   out = out.replace(
     /\bstroke=("(?!none|url\()[^"]*"|'(?!none|url\()[^']*')/gi,
     `stroke="${color}"`,
   );
-  out = out.replace(/fill\s*:\s*(?!none|url\()[^;"]+/gi, `fill:${color}`);
-  out = out.replace(/stroke\s*:\s*(?!none|url\()[^;"]+/gi, `stroke:${color}`);
+  out = out.replace(/fill\s*:\s*(?!none|url\()[^;"}<]+/gi, `fill:${color}`);
+  out = out.replace(/stroke\s*:\s*(?!none|url\()[^;"}<]+/gi, `stroke:${color}`);
   // CSS classes like .st0{fill:#414042}
   out = out.replace(/(\.|#)[a-zA-Z0-9_-]+\s*\{[^}]*\bfill\s*:\s*(?!none|url\()[^;}]*/gi, (block) =>
     block.replace(/fill\s*:\s*(?!none|url\()[^;}]*/gi, `fill:${color}`),
   );
+
+  if (holes.length > 0) {
+    const cut = holes.map((shape) => shape.replace(/\bfill="[^"]*"/i, 'fill="#000"')).join("");
+    const mask =
+      `<mask id="${KNOCKOUT_MASK_ID}" maskUnits="userSpaceOnUse" x="-100000" y="-100000" width="200000" height="200000">` +
+      `<rect x="-100000" y="-100000" width="200000" height="200000" fill="#fff"/>${cut}</mask>`;
+    out = out
+      .replace(/(<svg\b[^>]*>)/i, `$1${mask}<g mask="url(#${KNOCKOUT_MASK_ID})">`)
+      .replace(/<\/svg>\s*$/i, "</g></svg>");
+  }
   return out;
 }
 

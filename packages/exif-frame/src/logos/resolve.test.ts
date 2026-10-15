@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { resolveLogo, listLogos, logos } from "./index";
+import { resolveLogo, listLogos, loadLogoImage, logos } from "./index";
 import { formatCamera, formatSettingsLine, stripBrandFromModel } from "../exif";
 import type { NormalizedExif } from "../types";
 
@@ -74,5 +74,60 @@ describe("logos.get", () => {
 
   test("returns null for an unknown id", () => {
     expect(logos.get("nope")).toBeNull();
+  });
+});
+
+describe("loadLogoImage tint", () => {
+  const TINT = "#123456";
+
+  async function tinted(id: string, colorLogo: boolean): Promise<string> {
+    const logo = logos.get(id)!;
+    let url = "";
+    await loadLogoImage(
+      logo,
+      TINT,
+      async (src) => {
+        url = src;
+        return {} as CanvasImageSource;
+      },
+      { colorLogo },
+    );
+    return atob(url.split(",")[1]!);
+  }
+
+  test("mono mode leaves no original brand fills, for every logo", async () => {
+    for (const logo of listLogos()) {
+      const svg = await tinted(logo.id, false);
+      const fills = [...svg.matchAll(/\bfill="([^"]*)"/gi)].map((m) => m[1]!.toLowerCase());
+      // Only the tint, `none`, gradients, and the knockout mask's own black / white remain
+      const stray = fills.filter(
+        (f) => f !== TINT && f !== "none" && !f.startsWith("url(") && f !== "#000" && f !== "#fff",
+      );
+      expect(stray, logo.id).toEqual([]);
+    }
+  });
+
+  test("mono mode keeps every logo's markup well-formed", async () => {
+    for (const logo of listLogos()) {
+      const svg = await tinted(logo.id, false);
+      expect(svg.trimEnd().endsWith("</svg>"), logo.id).toBe(true);
+      // A stylesheet must still close, and no rule may swallow markup
+      expect((svg.match(/<style/g) ?? []).length, logo.id).toBe(
+        (svg.match(/<\/style>/g) ?? []).length,
+      );
+      expect(svg, logo.id).not.toMatch(/fill\s*:[^;"}<]*[<>]/);
+    }
+  });
+
+  test("white lettering is cut out of a flat shape instead of filling it", async () => {
+    const svg = await tinted("leica", false);
+    expect(svg).toContain("<mask");
+    expect(svg).toContain('mask="url(#exif-frame-knockout)"');
+  });
+
+  test("color mode keeps the brand fills", async () => {
+    const svg = await tinted("leica", true);
+    expect(svg).toContain("#ed1c24");
+    expect(svg).not.toContain("<mask");
   });
 });
