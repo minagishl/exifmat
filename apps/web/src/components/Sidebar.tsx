@@ -50,9 +50,8 @@ interface SidebarProps {
   onShare: () => Promise<void>;
 }
 
-/** Quiet text actions under the main download button. */
-const linkBtn =
-  "text-zinc-400 transition-colors enabled:hover:text-zinc-100 disabled:cursor-not-allowed disabled:opacity-40";
+/** Secondary export actions: same height and width rhythm, no icons. */
+const subBtn = `${ui.btnOutline} min-w-0 flex-1 justify-center disabled:cursor-not-allowed disabled:opacity-40`;
 
 type ActionState = "idle" | "working" | "done" | "failed";
 
@@ -397,33 +396,53 @@ export function Sidebar({
           </button>
 
           {(canCopy || canShare || photoCount > 1) && (
-            <div className="mt-3 flex items-center justify-center gap-4 text-[0.6875rem] font-medium">
-              {canCopy && (
-                <button
-                  type="button"
-                  disabled={busy || copyState === "working"}
-                  className={linkBtn}
-                  onClick={() => void run(onCopy, setCopyState)}
-                >
-                  {copyState === "done" ? "Copied" : copyState === "failed" ? "Failed" : "Copy"}
-                </button>
-              )}
-              {canShare && (
-                <button
-                  type="button"
-                  disabled={busy || shareState === "working"}
-                  className={linkBtn}
-                  onClick={() => void run(onShare, setShareState)}
-                >
-                  {shareState === "failed" ? "Failed" : "Share"}
-                </button>
-              )}
+            <div className="mt-2 flex flex-col gap-2">
               {photoCount > 1 && (
-                <button type="button" disabled={busy} className={linkBtn} onClick={onDownloadZip}>
-                  {zipProgress
-                    ? `Framing ${zipProgress.done} / ${zipProgress.total}…`
-                    : `All ${photoCount} as ZIP`}
+                <button type="button" disabled={busy} className={subBtn} onClick={onDownloadZip}>
+                  {zipProgress ? (
+                    <>
+                      Framing {zipProgress.done} / {zipProgress.total}
+                      <span
+                        className="ml-1 h-1 w-14 overflow-hidden rounded-full bg-zinc-600"
+                        aria-hidden
+                      >
+                        <span
+                          className="block h-full rounded-full bg-zinc-100 transition-[width] duration-200"
+                          style={{ width: `${(zipProgress.done / zipProgress.total) * 100}%` }}
+                        />
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      Download all {photoCount}
+                      <span className="font-normal text-neutral-500">ZIP</span>
+                    </>
+                  )}
                 </button>
+              )}
+              {(canCopy || canShare) && (
+                <div className="flex gap-2">
+                  {canCopy && (
+                    <button
+                      type="button"
+                      disabled={busy || copyState === "working"}
+                      className={subBtn}
+                      onClick={() => void run(onCopy, setCopyState)}
+                    >
+                      {copyState === "done" ? "Copied" : copyState === "failed" ? "Failed" : "Copy"}
+                    </button>
+                  )}
+                  {canShare && (
+                    <button
+                      type="button"
+                      disabled={busy || shareState === "working"}
+                      className={subBtn}
+                      onClick={() => void run(onShare, setShareState)}
+                    >
+                      {shareState === "failed" ? "Failed" : "Share"}
+                    </button>
+                  )}
+                </div>
               )}
             </div>
           )}
