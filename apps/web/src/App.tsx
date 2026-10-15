@@ -17,7 +17,7 @@ import {
 } from "./components/ResizeDivider";
 import { Sidebar } from "./components/Sidebar";
 import { ensureFontsLoaded, FRAME_FONT_FAMILY } from "./lib/fonts";
-import { loadSettings, saveSettings } from "./lib/settings";
+import { clearSettings, loadSettings, saveSettings } from "./lib/settings";
 import { createZip, type ZipEntry } from "./lib/zip";
 
 const ALL_FIELDS: ExifField[] = [
@@ -168,6 +168,19 @@ export default function App() {
     captionDirection,
     sidebarWidth,
   ]);
+
+  const resetSettings = () => {
+    clearSettings();
+    setTemplate("gallery-dark");
+    setShowLogo(true);
+    setColorLogo(false);
+    setLogoId("auto");
+    setStripBrandFromModel(true);
+    setFields(defaultFieldsFor("gallery-dark"));
+    setQuality(0.92);
+    setCaptionDirection("ltr");
+    setSidebarWidth(clampSidebarWidth(DEFAULT_SIDEBAR_WIDTH));
+  };
 
   const onFiles = useCallback((next: File[]) => {
     if (next.length === 0) return;
@@ -438,6 +451,7 @@ export default function App() {
       canShare={canShare}
       onCopy={copyImage}
       onShare={shareImage}
+      onResetSettings={resetSettings}
     />
   );
 

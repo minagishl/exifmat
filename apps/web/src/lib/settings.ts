@@ -66,3 +66,12 @@ export function saveSettings(settings: StoredSettings): void {
     /* storage unavailable (private mode, quota) — settings just won't persist */
   }
 }
+
+/** Forget everything remembered between visits. */
+export function clearSettings(): void {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    /* storage unavailable — nothing to clear */
+  }
+}

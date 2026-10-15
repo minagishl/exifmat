@@ -54,6 +54,7 @@ interface SidebarProps {
   canShare: boolean;
   onCopy: () => Promise<void>;
   onShare: () => Promise<void>;
+  onResetSettings: () => void;
 }
 
 /** Secondary export actions: same height and width rhythm, no icons. */
@@ -144,6 +145,7 @@ export function Sidebar({
   canShare,
   onCopy,
   onShare,
+  onResetSettings,
 }: SidebarProps) {
   const update = (key: keyof NormalizedExif, value: string) => {
     const next: NormalizedExif = { ...exif, [key]: value || undefined };
@@ -360,6 +362,19 @@ export function Sidebar({
                 />
               ))}
             </div>
+          </SidebarSection>
+
+          <SidebarSection title="Settings">
+            <p className="text-xs leading-5 text-neutral-500">
+              Options are saved in this browser. Reset restores the defaults.
+            </p>
+            <button
+              type="button"
+              className={`${ui.btnOutline} w-full justify-center`}
+              onClick={onResetSettings}
+            >
+              Reset saved settings
+            </button>
           </SidebarSection>
         </div>
 
