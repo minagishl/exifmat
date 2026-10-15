@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { IconBrandGithub, IconCheck, IconDownload, IconInfoCircle } from "@tabler/icons-react";
+import { IconBrandGithub, IconCheck, IconDownload, IconHelp } from "@tabler/icons-react";
 import type {
   CaptionDirection,
   ExifField,
@@ -144,7 +144,7 @@ export function Sidebar({
               className={`${ui.btnOutline} w-8 justify-center px-0!`}
               onClick={() => infoRef.current?.showModal()}
             >
-              <IconInfoCircle size={15} stroke={1.75} aria-hidden />
+              <IconHelp size={15} stroke={1.75} aria-hidden />
             </button>
             <a
               href={GITHUB_HREF}
