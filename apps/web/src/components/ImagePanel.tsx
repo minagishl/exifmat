@@ -8,7 +8,14 @@ import {
   type WheelEvent as ReactWheelEvent,
 } from "react";
 import { createPortal } from "react-dom";
-import { IconPhotoPlus, IconZoomIn, IconZoomOut, IconZoomReset } from "@tabler/icons-react";
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconPhotoPlus,
+  IconZoomIn,
+  IconZoomOut,
+  IconZoomReset,
+} from "@tabler/icons-react";
 import { ui } from "../lib/ui";
 import { ACCEPT_ATTR, isAcceptedPhoto } from "../lib/files";
 
@@ -21,7 +28,13 @@ interface ImagePanelProps {
   url: string | null;
   rendering: boolean;
   error: string | null;
-  onFile: (file: File) => void;
+  /** Number of photos in the batch and the one being shown. */
+  count: number;
+  index: number;
+  onStep: (delta: number) => void;
+  /** The photo being shown, for the hold-to-compare original. */
+  originalFile: File | null;
+  onFiles: (files: File[]) => void;
   onClear: () => void;
   /** On small screens the zoom controls render here (the sidebar header). */
   zoomSlot?: HTMLElement | null;
@@ -54,7 +67,11 @@ export function ImagePanel({
   url,
   rendering,
   error,
-  onFile,
+  count,
+  index,
+  onStep,
+  originalFile,
+  onFiles,
   onClear,
   zoomSlot,
 }: ImagePanelProps) {
@@ -84,12 +101,27 @@ export function ImagePanel({
   }
 
   const accept = useCallback(
-    (file: File | undefined) => {
-      if (!file || !isAcceptedPhoto(file)) return;
-      onFile(file);
+    (list: FileList | File[] | null | undefined) => {
+      const photos = Array.from(list ?? []).filter(isAcceptedPhoto);
+      if (photos.length > 0) onFiles(photos);
     },
-    [onFile],
+    [onFiles],
   );
+
+  // Hold-to-compare: the unframed original replaces the preview while pressed.
+  // Only formats the browser can decode natively (RAW cannot be shown directly).
+  const [compareUrl, setCompareUrl] = useState<string | null>(null);
+  const canCompare = Boolean(originalFile && /^image\/(jpeg|png|webp)$/.test(originalFile.type));
+  const startCompare = () => {
+    if (!originalFile || !canCompare) return;
+    setCompareUrl(URL.createObjectURL(originalFile));
+  };
+  const endCompare = () => {
+    setCompareUrl((current) => {
+      if (current) URL.revokeObjectURL(current);
+      return null;
+    });
+  };
 
   const onDragOver = (e: DragEvent) => {
     if (!isFileDrag(e)) return;
@@ -106,7 +138,7 @@ export function ImagePanel({
     if (!isFileDrag(e)) return;
     e.preventDefault();
     setDragActive(false);
-    accept(e.dataTransfer.files[0]);
+    accept(e.dataTransfer.files);
   };
 
   const openPicker = () => inputRef.current?.click();
@@ -243,8 +275,12 @@ export function ImagePanel({
         ref={inputRef}
         type="file"
         accept={ACCEPT_ATTR}
+        multiple
         className="hidden"
-        onChange={(e) => accept(e.target.files?.[0])}
+        onChange={(e) => {
+          accept(e.target.files);
+          e.target.value = "";
+        }}
       />
 
       {error && (
@@ -265,10 +301,10 @@ export function ImagePanel({
               <IconPhotoPlus size={40} stroke={1.75} aria-hidden />
             </div>
             <p className="text-[0.9375rem] font-medium tracking-tight text-neutral-100">
-              {dragActive ? "Release to import" : "Drop a photo to frame it"}
+              {dragActive ? "Release to import" : "Drop photos to frame them"}
             </p>
             <p className="mt-1.5 text-sm leading-relaxed text-neutral-400">
-              or click to browse your files
+              or click to browse your files — several at once works too
             </p>
             <p className="mt-5 max-w-xs text-xs leading-relaxed text-neutral-500">
               JPEG, PNG, WebP, or camera RAW. EXIF stays in your browser — nothing is uploaded.
@@ -277,7 +313,59 @@ export function ImagePanel({
         </div>
       ) : (
         <>
-          <div className="absolute top-6 right-3 z-20 flex -translate-y-1/2 gap-2">
+          <div className="absolute top-6 right-3 z-20 flex -translate-y-1/2 items-center gap-2">
+            {count > 1 && (
+              <div className="flex h-8 items-center rounded-lg border border-white/10 bg-zinc-800 p-[3px] text-xs text-zinc-200">
+                <button
+                  type="button"
+                  aria-label="Previous photo"
+                  disabled={index === 0}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onStep(-1);
+                  }}
+                  className={ui.btnIcon}
+                >
+                  <IconChevronLeft size={16} stroke={1.75} />
+                </button>
+                <span className="min-w-[3rem] px-1 text-center tabular-nums">
+                  {index + 1} / {count}
+                </span>
+                <button
+                  type="button"
+                  aria-label="Next photo"
+                  disabled={index === count - 1}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onStep(1);
+                  }}
+                  className={ui.btnIcon}
+                >
+                  <IconChevronRight size={16} stroke={1.75} />
+                </button>
+              </div>
+            )}
+            {canCompare && url && (
+              <button
+                type="button"
+                title="Hold to see the original"
+                onPointerDown={(e) => {
+                  e.stopPropagation();
+                  e.currentTarget.setPointerCapture(e.pointerId);
+                  startCompare();
+                }}
+                onPointerUp={endCompare}
+                onPointerCancel={endCompare}
+                onKeyDown={(e) => {
+                  if ((e.key === " " || e.key === "Enter") && !e.repeat) startCompare();
+                }}
+                onKeyUp={endCompare}
+                onBlur={endCompare}
+                className={ui.btnOutline}
+              >
+                Original
+              </button>
+            )}
             <button
               type="button"
               onClick={(e) => {
@@ -315,8 +403,8 @@ export function ImagePanel({
             <div className="absolute inset-0 flex items-center justify-center p-6 md:p-10">
               {url ? (
                 <img
-                  src={url}
-                  alt="Framed preview"
+                  src={compareUrl ?? url}
+                  alt={compareUrl ? "Original photo" : "Framed preview"}
                   draggable={false}
                   className="max-h-full max-w-full select-none object-contain rounded-[2px] shadow-[0_24px_60px_-12px_rgb(0_0_0/0.6),0_0_0_1px_rgb(255_255_255/0.05)]"
                   style={{
@@ -367,7 +455,7 @@ export function ImagePanel({
 
           {!dragActive && (
             <p className="pointer-events-none absolute bottom-4 left-1/2 z-10 max-w-md -translate-x-1/2 px-4 text-center text-[0.6875rem] text-neutral-600">
-              Scroll to zoom. Drag to pan. Drop a file to replace.
+              Scroll to zoom. Drag to pan. Drop files to replace.
             </p>
           )}
         </>

@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { IconBrandGithub, IconCheck, IconDownload, IconHelp } from "@tabler/icons-react";
 import type {
   CaptionDirection,
@@ -40,7 +40,21 @@ interface SidebarProps {
   onDownloadJpeg: () => void;
   onDownloadPng: () => void;
   zoomSlotRef?: (el: HTMLDivElement | null) => void;
+  /** Photos loaded; with more than one, the whole batch can be saved as a ZIP. */
+  photoCount: number;
+  zipProgress: { done: number; total: number } | null;
+  onDownloadZip: () => void;
+  canCopy: boolean;
+  canShare: boolean;
+  onCopy: () => Promise<void>;
+  onShare: () => Promise<void>;
 }
+
+/** Quiet text actions under the main download button. */
+const linkBtn =
+  "text-zinc-400 transition-colors enabled:hover:text-zinc-100 disabled:cursor-not-allowed disabled:opacity-40";
+
+type ActionState = "idle" | "working" | "done" | "failed";
 
 function SideIcon({ side }: { side: "left" | "right" }) {
   return (
@@ -115,6 +129,13 @@ export function Sidebar({
   onDownloadJpeg,
   onDownloadPng,
   zoomSlotRef,
+  photoCount,
+  zipProgress,
+  onDownloadZip,
+  canCopy,
+  canShare,
+  onCopy,
+  onShare,
 }: SidebarProps) {
   const update = (key: keyof NormalizedExif, value: string) => {
     const next: NormalizedExif = { ...exif, [key]: value || undefined };
@@ -125,6 +146,23 @@ export function Sidebar({
   const infoRef = useRef<HTMLDialogElement>(null);
   const qualityPct = Math.round(quality * 100);
   const busy = disabled || rendering;
+  const [format, setFormat] = useState<"jpg" | "png">("jpg");
+
+  const [copyState, setCopyState] = useState<ActionState>("idle");
+  const [shareState, setShareState] = useState<ActionState>("idle");
+
+  /** Run an async export action and flash its outcome on the button for a moment. */
+  const run = async (action: () => Promise<void>, set: (s: ActionState) => void) => {
+    set("working");
+    try {
+      await action();
+      set("done");
+    } catch (err) {
+      // Closing the share sheet is not an error
+      set(err instanceof DOMException && err.name === "AbortError" ? "idle" : "failed");
+    }
+    setTimeout(() => set("idle"), 1600);
+  };
 
   return (
     <>
@@ -293,39 +331,102 @@ export function Sidebar({
           </SidebarSection>
         </div>
 
-        <footer className="shrink-0 border-t border-white/10 bg-zinc-900 bg-linear-to-b from-white/[0.02] to-transparent px-4 pt-3.5 pb-4">
-          <h2 className={`${ui.sectionTitle} mb-3.5`}>Export</h2>
-          <UiParam
-            label="Quality (JPG)"
-            min={50}
-            max={100}
-            step={1}
-            disabled={disabled}
-            value={qualityPct}
-            format={(v) => `${v}%`}
-            onChange={(v) => onQualityChange(v / 100)}
-          />
-          <div className="mt-4 flex flex-col gap-2">
-            <button
-              type="button"
-              disabled={busy}
-              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-zinc-100 px-3 py-[9px] text-xs font-semibold text-zinc-900 shadow-sm transition enabled:hover:brightness-110 enabled:active:translate-y-px enabled:active:brightness-95 enabled:active:shadow-none disabled:cursor-not-allowed disabled:opacity-40"
-              onClick={onDownloadJpeg}
+        <footer className="shrink-0 border-t border-white/10 bg-zinc-900 px-4 pt-3.5 pb-4">
+          <div className="mb-3.5 flex items-center justify-between">
+            <h2 className={ui.sectionTitle}>Export</h2>
+            <div
+              role="radiogroup"
+              aria-label="Format"
+              className="flex gap-0.5 rounded-lg border border-white/10 bg-zinc-950 p-0.5"
             >
-              <IconDownload size={15} stroke={2} aria-hidden />
-              {rendering ? "Rendering…" : "Download JPG"}
-            </button>
-            <button
-              type="button"
-              disabled={busy}
-              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-white/10 bg-zinc-800 px-3 py-[9px] text-xs font-semibold text-zinc-200 shadow-sm transition enabled:hover:brightness-110 enabled:active:translate-y-px enabled:active:shadow-none disabled:cursor-not-allowed disabled:opacity-40"
-              onClick={onDownloadPng}
-            >
-              <IconDownload size={15} stroke={2} aria-hidden />
-              {rendering ? "Rendering…" : "Download PNG"}
-              <span className="font-normal text-neutral-500">lossless</span>
-            </button>
+              {(["jpg", "png"] as const).map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  role="radio"
+                  aria-checked={format === value}
+                  data-active={format === value ? "true" : "false"}
+                  onClick={() => setFormat(value)}
+                  className="rounded-md px-2.5 py-1 text-[0.6875rem] font-semibold text-zinc-400 transition-colors enabled:hover:text-zinc-200 data-[active=true]:bg-zinc-700 data-[active=true]:text-zinc-50"
+                >
+                  {value.toUpperCase()}
+                </button>
+              ))}
+            </div>
           </div>
+
+          {/* Both panels animate their row height, so the footer resizes smoothly */}
+          <div
+            inert={format !== "jpg"}
+            className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out ${
+              format === "jpg" ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+            }`}
+          >
+            <div className="min-h-0 overflow-hidden">
+              <UiParam
+                label="Quality"
+                min={50}
+                max={100}
+                step={1}
+                disabled={disabled}
+                value={qualityPct}
+                format={(v) => `${v}%`}
+                onChange={(v) => onQualityChange(v / 100)}
+              />
+            </div>
+          </div>
+          <div
+            inert={format !== "png"}
+            className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out ${
+              format === "png" ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+            }`}
+          >
+            <div className="min-h-0 overflow-hidden">
+              <p className="text-xs leading-5 text-neutral-500">Lossless, larger file size.</p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            disabled={busy}
+            className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-zinc-100 px-3 py-2.5 text-xs font-semibold text-zinc-900 shadow-sm transition enabled:hover:brightness-110 enabled:active:translate-y-px enabled:active:brightness-95 enabled:active:shadow-none disabled:cursor-not-allowed disabled:opacity-40"
+            onClick={format === "jpg" ? onDownloadJpeg : onDownloadPng}
+          >
+            <IconDownload size={15} stroke={2} aria-hidden />
+            {rendering && !zipProgress ? "Rendering…" : `Download ${format.toUpperCase()}`}
+          </button>
+
+          {(canCopy || canShare || photoCount > 1) && (
+            <div className="mt-3 flex items-center justify-center gap-4 text-[0.6875rem] font-medium">
+              {canCopy && (
+                <button
+                  type="button"
+                  disabled={busy || copyState === "working"}
+                  className={linkBtn}
+                  onClick={() => void run(onCopy, setCopyState)}
+                >
+                  {copyState === "done" ? "Copied" : copyState === "failed" ? "Failed" : "Copy"}
+                </button>
+              )}
+              {canShare && (
+                <button
+                  type="button"
+                  disabled={busy || shareState === "working"}
+                  className={linkBtn}
+                  onClick={() => void run(onShare, setShareState)}
+                >
+                  {shareState === "failed" ? "Failed" : "Share"}
+                </button>
+              )}
+              {photoCount > 1 && (
+                <button type="button" disabled={busy} className={linkBtn} onClick={onDownloadZip}>
+                  {zipProgress
+                    ? `Framing ${zipProgress.done} / ${zipProgress.total}…`
+                    : `All ${photoCount} as ZIP`}
+                </button>
+              )}
+            </div>
+          )}
         </footer>
       </aside>
       <InfoDialog ref={infoRef} />

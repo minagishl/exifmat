@@ -16,6 +16,8 @@ import {
 } from "./components/ResizeDivider";
 import { Sidebar } from "./components/Sidebar";
 import { ensureFontsLoaded, FRAME_FONT_FAMILY } from "./lib/fonts";
+import { loadSettings, saveSettings } from "./lib/settings";
+import { createZip, type ZipEntry } from "./lib/zip";
 
 const ALL_FIELDS: ExifField[] = [
   "camera",
@@ -83,21 +85,48 @@ function useDebouncedValue<T>(value: T, delay: number): T {
 
 const templates = listTemplates();
 
+/** Options remembered from the previous visit (validated against what exists now). */
+const saved = loadSettings(
+  templates.map((t) => t.id),
+  ALL_FIELDS,
+);
+
+function baseName(name: string): string {
+  const dot = name.lastIndexOf(".");
+  return dot > 0 ? name.slice(0, dot) : name;
+}
+
+function isInteractiveTarget(target: EventTarget | null): boolean {
+  const el = target as HTMLElement | null;
+  return Boolean(el?.closest("input, textarea, select, [contenteditable='true']"));
+}
+
 export default function App() {
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const [index, setIndex] = useState(0);
+  const file = files[index] ?? null;
   const [exif, setExif] = useState<NormalizedExif>({});
-  const [template, setTemplate] = useState<TemplateId>("gallery-dark");
-  const [showLogo, setShowLogo] = useState(true);
-  const [colorLogo, setColorLogo] = useState(false);
-  const [stripBrandFromModel, setStripBrandFromModel] = useState(true);
-  const [fields, setFields] = useState<ExifField[]>(() => defaultFieldsFor("gallery-dark"));
-  const [quality, setQuality] = useState(0.92);
-  const [captionDirection, setCaptionDirection] = useState<CaptionDirection>("ltr");
+  const [template, setTemplate] = useState<TemplateId>(
+    (saved.template as TemplateId | undefined) ?? "gallery-dark",
+  );
+  const [showLogo, setShowLogo] = useState(saved.showLogo ?? true);
+  const [colorLogo, setColorLogo] = useState(saved.colorLogo ?? false);
+  const [stripBrandFromModel, setStripBrandFromModel] = useState(saved.stripBrandFromModel ?? true);
+  const [fields, setFields] = useState<ExifField[]>(
+    () => saved.fields ?? defaultFieldsFor((saved.template as TemplateId) ?? "gallery-dark"),
+  );
+  const [quality, setQuality] = useState(saved.quality ?? 0.92);
+  const [captionDirection, setCaptionDirection] = useState<CaptionDirection>(
+    saved.captionDirection ?? "ltr",
+  );
+  const [zipProgress, setZipProgress] = useState<{ done: number; total: number } | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [rendering, setRendering] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [zoomSlot, setZoomSlot] = useState<HTMLElement | null>(null);
-  const [sidebarWidth, setSidebarWidth] = useState(() => clampSidebarWidth(DEFAULT_SIDEBAR_WIDTH));
+  const [sidebarWidth, setSidebarWidth] = useState(() =>
+    clampSidebarWidth(saved.sidebarWidth ?? DEFAULT_SIDEBAR_WIDTH),
+  );
 
   const previewQuality = useDebouncedValue(quality, QUALITY_DEBOUNCE_MS);
 
@@ -111,16 +140,69 @@ export default function App() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  const onFile = useCallback(async (next: File) => {
+  useEffect(() => {
+    saveSettings({
+      template,
+      showLogo,
+      colorLogo,
+      stripBrandFromModel,
+      fields,
+      quality,
+      captionDirection,
+      sidebarWidth,
+    });
+  }, [
+    template,
+    showLogo,
+    colorLogo,
+    stripBrandFromModel,
+    fields,
+    quality,
+    captionDirection,
+    sidebarWidth,
+  ]);
+
+  const onFiles = useCallback((next: File[]) => {
+    if (next.length === 0) return;
     setError(null);
-    setFile(next);
-    try {
-      const parsed = await parseExif(next);
-      setExif(parsed);
-    } catch {
-      setExif({});
-    }
+    setFiles(next);
+    setIndex(0);
   }, []);
+
+  const step = useCallback(
+    (delta: number) => {
+      setIndex((i) => Math.max(0, Math.min(files.length - 1, i + delta)));
+    },
+    [files.length],
+  );
+
+  // Read EXIF whenever the current photo changes
+  useEffect(() => {
+    if (!file) return;
+    let cancelled = false;
+    parseExif(file)
+      .then((parsed) => {
+        if (!cancelled) setExif(parsed);
+      })
+      .catch(() => {
+        if (!cancelled) setExif({});
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [file]);
+
+  // ← / → switch photos in a batch
+  useEffect(() => {
+    if (files.length < 2) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (isInteractiveTarget(e.target) || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === "ArrowLeft") step(-1);
+      else if (e.key === "ArrowRight") step(1);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [files.length, step]);
 
   useEffect(() => {
     if (!file) return;
@@ -205,38 +287,110 @@ export default function App() {
     }
   };
 
-  const download = async (type: "image/jpeg" | "image/png") => {
-    if (!file) return;
+  const renderBlob = async (
+    source: File,
+    type: "image/jpeg" | "image/png",
+    exifOverride: NormalizedExif,
+  ): Promise<Blob> => {
+    await ensureFontsLoaded();
+    const result = await createFrame({
+      image: source,
+      filename: source.name,
+      template,
+      options: {
+        showLogo,
+        colorLogo,
+        stripBrandFromModel,
+        fields,
+        exif: exifOverride,
+        fontFamily: FRAME_FONT_FAMILY,
+        quality,
+        captionDirection,
+      },
+    });
+    return result.toBlob(type);
+  };
+
+  const outputName = (source: File, type: "image/jpeg" | "image/png") =>
+    `${baseName(source.name)}-framed.${type === "image/png" ? "png" : "jpg"}`;
+
+  const withRendering = async (task: () => Promise<void>, fallback: string) => {
     setRendering(true);
     try {
-      await ensureFontsLoaded();
-      const result = await createFrame({
-        image: file,
-        template,
-        options: {
-          showLogo,
-          colorLogo,
-          stripBrandFromModel,
-          fields,
-          exif,
-          fontFamily: FRAME_FONT_FAMILY,
-          quality,
-          captionDirection,
-        },
-      });
-      const blob = await result.toBlob(type);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `exif-frame.${type === "image/png" ? "png" : "jpg"}`;
-      a.click();
-      URL.revokeObjectURL(url);
+      await task();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Download failed");
+      setError(err instanceof Error ? err.message : fallback);
     } finally {
       setRendering(false);
     }
   };
+
+  const download = (type: "image/jpeg" | "image/png") => {
+    if (!file) return;
+    void withRendering(async () => {
+      const blob = await renderBlob(file, type, exif);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = outputName(file, type);
+      a.click();
+      URL.revokeObjectURL(url);
+    }, "Download failed");
+  };
+
+  /** Frame every photo in the batch with the current options and save one ZIP. */
+  const downloadZip = async () => {
+    if (files.length < 2) return;
+    setRendering(true);
+    setZipProgress({ done: 0, total: files.length });
+    try {
+      const entries: ZipEntry[] = [];
+      const used = new Set<string>();
+      for (let i = 0; i < files.length; i++) {
+        const source = files[i]!;
+        // The photo being edited keeps its edited metadata
+        const meta = i === index ? exif : await parseExif(source).catch(() => ({}));
+        const blob = await renderBlob(source, "image/jpeg", meta);
+        let name = outputName(source, "image/jpeg");
+        for (let n = 2; used.has(name); n++) {
+          name = `${baseName(source.name)}-framed-${n}.jpg`;
+        }
+        used.add(name);
+        entries.push({ name, data: new Uint8Array(await blob.arrayBuffer()) });
+        setZipProgress({ done: i + 1, total: files.length });
+      }
+      const url = URL.createObjectURL(createZip(entries));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "exif-frame.zip";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Export failed");
+    } finally {
+      setZipProgress(null);
+      setRendering(false);
+    }
+  };
+
+  /** Copy the framed image to the clipboard (PNG is the only widely supported type). */
+  const copyImage = async () => {
+    if (!file) return;
+    const blob = await renderBlob(file, "image/png", exif);
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+  };
+
+  const shareImage = async () => {
+    if (!file) return;
+    const blob = await renderBlob(file, "image/jpeg", exif);
+    const shared = new File([blob], outputName(file, "image/jpeg"), { type: "image/jpeg" });
+    if (!navigator.canShare?.({ files: [shared] })) throw new Error("Sharing is not supported");
+    await navigator.share({ files: [shared] });
+  };
+
+  const canCopy = typeof ClipboardItem !== "undefined" && Boolean(navigator.clipboard?.write);
+  const canShare =
+    typeof navigator.share === "function" && typeof navigator.canShare === "function";
 
   const sidebar = (
     <Sidebar
@@ -262,8 +416,15 @@ export default function App() {
       onQualityChange={setQuality}
       disabled={!file}
       rendering={rendering}
-      onDownloadJpeg={() => void download("image/jpeg")}
-      onDownloadPng={() => void download("image/png")}
+      onDownloadJpeg={() => download("image/jpeg")}
+      onDownloadPng={() => download("image/png")}
+      photoCount={files.length}
+      zipProgress={zipProgress}
+      onDownloadZip={() => void downloadZip()}
+      canCopy={canCopy}
+      canShare={canShare}
+      onCopy={copyImage}
+      onShare={shareImage}
     />
   );
 
@@ -276,9 +437,14 @@ export default function App() {
           url={previewUrl}
           rendering={rendering}
           error={error}
-          onFile={onFile}
+          count={files.length}
+          index={index}
+          originalFile={file}
+          onStep={step}
+          onFiles={onFiles}
           onClear={() => {
-            setFile(null);
+            setFiles([]);
+            setIndex(0);
             setExif({});
             setPreviewUrl(null);
           }}
