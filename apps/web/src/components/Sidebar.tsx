@@ -1,5 +1,11 @@
 import { useRef, useState } from "react";
-import { IconBrandGithub, IconCheck, IconDownload, IconHelp } from "@tabler/icons-react";
+import {
+  IconBrandGithub,
+  IconCheck,
+  IconChevronDown,
+  IconDownload,
+  IconHelp,
+} from "@tabler/icons-react";
 import { resolveLogo } from "exif-frame";
 import type {
   CaptionDirection,
@@ -233,21 +239,29 @@ export function Sidebar({
                 ].join(" ")}
               >
                 <span className="text-xs leading-5 text-zinc-300">Logo</span>
-                <select
-                  value={logoId}
-                  disabled={disabled || !showLogo}
-                  onChange={(e) => onLogoIdChange(e.target.value)}
-                  className="h-8 min-w-0 max-w-[60%] flex-1 rounded-lg border border-white/10 bg-zinc-800/60 px-2 text-xs text-zinc-100 outline-none transition-colors enabled:hover:border-white/20 disabled:cursor-not-allowed"
-                >
-                  <option value="auto">
-                    {detectedLogo ? `Auto (${detectedLogo.name})` : "Auto (not detected)"}
-                  </option>
-                  {logos.map((logo) => (
-                    <option key={logo.id} value={logo.id}>
-                      {logo.name}
+                <span className="relative flex h-8 min-w-0 max-w-[60%] flex-1">
+                  <select
+                    value={logoId}
+                    disabled={disabled || !showLogo}
+                    onChange={(e) => onLogoIdChange(e.target.value)}
+                    className="h-8 w-full min-w-0 appearance-none rounded-lg border border-white/10 bg-zinc-800/60 pr-8 pl-2.5 text-xs text-zinc-100 outline-none transition-colors enabled:hover:border-white/20 disabled:cursor-not-allowed"
+                  >
+                    <option value="auto">
+                      {detectedLogo ? `Auto (${detectedLogo.name})` : "Auto (not detected)"}
                     </option>
-                  ))}
-                </select>
+                    {logos.map((logo) => (
+                      <option key={logo.id} value={logo.id}>
+                        {logo.name}
+                      </option>
+                    ))}
+                  </select>
+                  <IconChevronDown
+                    size={14}
+                    stroke={2}
+                    aria-hidden
+                    className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-zinc-400"
+                  />
+                </span>
               </label>
               <UiToggle
                 label="Color logo"
