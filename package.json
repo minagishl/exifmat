@@ -10,7 +10,7 @@
     "build": "bun run --filter exifmat build && bun run --filter web build",
     "build:lib": "bun run --filter exifmat build",
     "typecheck": "bun run --filter exifmat typecheck && bun run build:lib && bun run --filter web typecheck",
-    "deploy": "bun run build:lib && bun run --filter web deploy",
+    "deploy": "bun run build && bunx wrangler deploy",
     "test": "bun run --filter exifmat test",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
