@@ -30,7 +30,7 @@ export function InfoDialog({ ref }: { ref: Ref<HTMLDialogElement> }) {
         // Clicking the backdrop targets the <dialog> element itself.
         if (e.target === e.currentTarget) e.currentTarget.close();
       }}
-      className="m-auto w-[min(36rem,calc(100vw-2rem))] overflow-hidden outline-none rounded-2xl border border-white/10 bg-zinc-900 p-0 text-zinc-100 shadow-2xl backdrop:bg-black/70 backdrop:backdrop-blur-[2px]"
+      className="m-auto w-[min(36rem,calc(100dvw-2rem))] overflow-hidden outline-none rounded-2xl border border-white/10 bg-zinc-900 p-0 text-zinc-100 shadow-2xl backdrop:bg-black/70 backdrop:backdrop-blur-[2px]"
     >
       <header
         style={{ backgroundImage: `url(${aboutBg})` }}
@@ -47,7 +47,7 @@ export function InfoDialog({ ref }: { ref: Ref<HTMLDialogElement> }) {
         </p>
       </header>
 
-      <dl className="px-6 py-3 max-sm:max-h-[40vh] max-sm:overflow-y-auto">
+      <dl className="px-6 py-3 max-sm:max-h-[40dvh] max-sm:overflow-y-auto">
         {ITEMS.map((item) => (
           <div key={item.title} className="grid gap-1 py-3 sm:grid-cols-[6.5rem_1fr] sm:gap-4">
             <dt className="text-xs leading-relaxed font-medium text-zinc-200">{item.title}</dt>

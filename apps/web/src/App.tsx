@@ -456,8 +456,8 @@ export default function App() {
   );
 
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--color-zinc-900)] lg:h-screen lg:flex-row lg:overflow-hidden">
-      <div className="flex min-h-[min(100vh,720px)] min-w-0 flex-1 flex-col lg:min-h-0">
+    <div className="flex min-h-dvh flex-col bg-[var(--color-zinc-900)] lg:h-dvh lg:flex-row lg:overflow-hidden">
+      <div className="flex min-h-[min(100dvh,720px)] min-w-0 flex-1 flex-col lg:min-h-0">
         <ImagePanel
           zoomSlot={zoomSlot}
           hasFile={file !== null}
@@ -481,7 +481,7 @@ export default function App() {
       <ResizeDivider sidebarWidth={sidebarWidth} onWidthChange={setSidebarWidth} />
 
       <div
-        className="w-full lg:w-[var(--sidebar-width,380px)] shrink-0 lg:flex lg:h-full lg:max-h-screen lg:flex-col lg:overflow-hidden"
+        className="w-full lg:w-[var(--sidebar-width,380px)] shrink-0 lg:flex lg:h-full lg:max-h-dvh lg:flex-col lg:overflow-hidden"
         style={{ "--sidebar-width": `${sidebarWidth}px` } as CSSProperties}
       >
         {sidebar}
