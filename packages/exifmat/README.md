@@ -35,6 +35,23 @@ await createFrame({
 });
 ```
 
+## HEIC / HEIF / AVIF
+
+These are never mistaken for RAW. EXIF is read from the original file, and the pixels are decoded by the platform (AVIF works in current browsers and `@napi-rs/canvas`). HEIC/HEIF is not decodable by most canvases, so register a decoder that converts it to JPEG/PNG:
+
+```ts
+import { heifBrand, registerImageDecoder } from "exifmat";
+
+registerImageDecoder(async (bytes) => {
+  if (heifBrand(bytes) !== "heic") return null;
+  const { heicTo } = await import("heic-to"); // any HEIC decoder works
+  const blob = await heicTo({ blob: new Blob([bytes]), type: "image/jpeg", quality: 0.95 });
+  return new Uint8Array(await blob.arrayBuffer());
+});
+```
+
+The demo app registers `heic-to` for you (loaded on demand).
+
 ## Quick start
 
 ```ts

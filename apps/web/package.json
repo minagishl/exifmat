@@ -13,6 +13,7 @@
     "@fontsource-variable/inter": "^5.3.0",
     "@tabler/icons-react": "^3.49.0",
     "exifmat": "workspace:*",
+    "heic-to": "^1.6.6",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },

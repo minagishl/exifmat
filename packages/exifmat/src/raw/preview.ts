@@ -1,5 +1,6 @@
 import exifr from "exifr";
-import { isDecodableRaster, isRawBytes } from "./formats";
+import { decodeWithRegistered } from "./decoders";
+import { heifBrand, isDecodableRaster, isRawBytes } from "./formats";
 import { largestEmbeddedJpeg } from "./jpeg";
 
 export interface PreviewResult {
@@ -21,6 +22,13 @@ export async function resolvePreviewBytes(
 ): Promise<PreviewResult> {
   if (isDecodableRaster(data)) {
     return { bytes: data, fromRawPreview: false };
+  }
+
+  // HEIC/HEIF/AVIF: a registered decoder wins, otherwise let the platform try natively
+  // (an embedded EXIF thumbnail must never be mistaken for the photo)
+  if (heifBrand(data)) {
+    const decoded = await decodeWithRegistered(data, filename);
+    return { bytes: decoded ?? data, fromRawPreview: false };
   }
 
   const treatAsRaw = isRawBytes(data, filename);

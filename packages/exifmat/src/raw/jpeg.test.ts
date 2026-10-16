@@ -1,6 +1,12 @@
 import { describe, expect, test } from "bun:test";
 import { findEmbeddedJpegs, largestEmbeddedJpeg } from "./jpeg";
-import { isRawExtension, isDecodableRaster, detectRawMagic } from "./formats";
+import {
+  isRawExtension,
+  isDecodableRaster,
+  detectRawMagic,
+  heifBrand,
+  isRawBytes,
+} from "./formats";
 
 /** Minimal valid 1x1 JPEG */
 function tinyJpeg(): Uint8Array {
@@ -139,5 +145,26 @@ describe("embedded JPEG scan", () => {
     expect(best!.byteLength).toBeGreaterThanOrEqual(large.byteLength - 10);
     expect(best![0]).toBe(0xff);
     expect(best![1]).toBe(0xd8);
+  });
+});
+
+describe("heif detection", () => {
+  const ftyp = (brand: string) => {
+    const b = new Uint8Array(16);
+    b.set([0, 0, 0, 16], 0);
+    b.set(new TextEncoder().encode(`ftyp${brand}`), 4);
+    return b;
+  };
+
+  test("recognises HEIC and AVIF brands", () => {
+    expect(heifBrand(ftyp("heic"))).toBe("heic");
+    expect(heifBrand(ftyp("mif1"))).toBe("heic");
+    expect(heifBrand(ftyp("avif"))).toBe("avif");
+    expect(heifBrand(ftyp("crx "))).toBeNull();
+  });
+
+  test("HEIC is not treated as camera RAW", () => {
+    expect(isRawBytes(ftyp("heic"), "IMG_0001.HEIC")).toBe(false);
+    expect(isRawBytes(ftyp("crx "), "IMG_0001.CR3")).toBe(true);
   });
 });

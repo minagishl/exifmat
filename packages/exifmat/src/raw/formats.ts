@@ -55,19 +55,10 @@ function readAscii(bytes: Uint8Array, offset: number, len: number): string {
 export function detectRawMagic(bytes: Uint8Array): boolean {
   if (bytes.length < 12) return false;
 
-  // BMFF containers: CR3 (crx), HEIC/HEIF (often need embedded JPEG for canvas)
+  // BMFF containers: CR3 (crx). HEIC/HEIF/AVIF are regular images, see `heifBrand`.
   if (readAscii(bytes, 4, 4) === "ftyp") {
     const brand = readAscii(bytes, 8, 4).trim();
-    if (
-      brand.startsWith("crx") ||
-      brand === "heic" ||
-      brand === "heif" ||
-      brand === "mif1" ||
-      brand === "msf1" ||
-      brand === "avif"
-    ) {
-      return true;
-    }
+    if (brand.startsWith("crx")) return true;
   }
 
   // Fujifilm RAF
@@ -94,6 +85,30 @@ export function detectRawMagic(bytes: Uint8Array): boolean {
   return false;
 }
 
+export type HeifBrand = "heic" | "avif";
+
+const HEIC_BRANDS = new Set([
+  "heic",
+  "heix",
+  "hevc",
+  "hevx",
+  "heim",
+  "heis",
+  "mif1",
+  "msf1",
+  "heif",
+]);
+const AVIF_BRANDS = new Set(["avif", "avis"]);
+
+/** Detect HEIC/HEIF and AVIF (ISO BMFF image containers) from the `ftyp` box. */
+export function heifBrand(bytes: Uint8Array): HeifBrand | null {
+  if (bytes.length < 12 || readAscii(bytes, 4, 4) !== "ftyp") return null;
+  const brand = readAscii(bytes, 8, 4).trim();
+  if (AVIF_BRANDS.has(brand)) return "avif";
+  if (HEIC_BRANDS.has(brand)) return "heic";
+  return null;
+}
+
 /** True when bytes look like a canvas-decodable raster (JPEG/PNG/WebP/GIF/BMP) */
 export function isDecodableRaster(bytes: Uint8Array): boolean {
   if (bytes.length < 12) return false;
@@ -116,6 +131,6 @@ export function isDecodableRaster(bytes: Uint8Array): boolean {
 
 export function isRawBytes(bytes: Uint8Array, filename?: string | null): boolean {
   if (isRawExtension(filename)) return true;
-  if (isDecodableRaster(bytes)) return false;
+  if (isDecodableRaster(bytes) || heifBrand(bytes)) return false;
   return detectRawMagic(bytes);
 }

@@ -7,6 +7,8 @@ export {
   RAW_EXTENSIONS,
   isRawExtension,
   isRawBytes,
+  heifBrand,
+  registerImageDecoder,
   resolvePreviewBytes,
   largestEmbeddedJpeg,
 } from "./raw";
@@ -26,4 +28,4 @@ export type {
   LogoAsset,
   TemplateRenderer,
 } from "./types";
-export type { PreviewResult } from "./raw";
+export type { PreviewResult, ImageDecoder } from "./raw";
