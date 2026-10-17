@@ -3,14 +3,59 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>exifmat — Add camera metadata frames to your photos</title>
     <meta
       name="description"
-      content="exifmat — generate photography frames with camera metadata in your browser."
+      content="Free in-browser tool that adds photography frames with camera, lens, and EXIF metadata to your photos. Nothing is uploaded; JPEG, PNG, WebP, and HEIC are supported."
     />
-    <title>exifmat</title>
+    <link rel="canonical" href="https://exifmat.com/" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#18181b" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="application-name" content="exifmat" />
+    <meta
+      name="keywords"
+      content="EXIF, photo frame, camera metadata, watermark, photography, HEIC"
+    />
+
+    <meta property="og:url" content="https://exifmat.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="exifmat" />
+    <meta property="og:title" content="exifmat — Add camera metadata frames to your photos" />
+    <meta
+      property="og:description"
+      content="Generate photography frames with camera and EXIF metadata right in your browser. Your photos never leave your device."
+    />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="exifmat — Add camera metadata frames to your photos" />
+    <meta
+      name="twitter:description"
+      content="Generate photography frames with camera and EXIF metadata right in your browser."
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "exifmat",
+        "url": "https://exifmat.com/",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Any (web browser)",
+        "description": "Generate photography frames with camera metadata in your browser.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "sameAs": "https://github.com/minagishl/exifmat"
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <h1>exifmat</h1>
+      <p>
+        exifmat generates photography frames with camera, lens, and EXIF metadata from your photos,
+        entirely in your browser. Please enable JavaScript to use it.
+      </p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
