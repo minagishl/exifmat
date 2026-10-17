@@ -266,7 +266,7 @@ export function ImagePanel({
       onDragLeave={onDragLeave}
       onDrop={onDrop}
       className={[
-        "group/drop relative flex h-full min-h-[min(100dvh,720px)] flex-1 flex-col bg-zinc-950 [background-image:radial-gradient(120%_80%_at_50%_0%,rgb(255_255_255/0.035),transparent_60%),radial-gradient(circle_at_1px_1px,rgb(255_255_255/0.045)_1px,transparent_0)] [background-size:100%_100%,20px_20px]",
+        "group/drop relative flex h-full min-h-[min(70dvh,720px)] flex-1 flex-col bg-zinc-950 [background-image:radial-gradient(120%_80%_at_50%_0%,rgb(255_255_255/0.035),transparent_60%),radial-gradient(circle_at_1px_1px,rgb(255_255_255/0.045)_1px,transparent_0)] [background-size:100%_100%,20px_20px]",
         !hasFile ? "cursor-pointer" : "",
         dragActive ? "ring-2 ring-inset ring-[var(--color-blue-500)]/60" : "",
       ].join(" ")}
@@ -391,7 +391,8 @@ export function ImagePanel({
           <div
             ref={viewportRef}
             className={[
-              "relative min-h-0 flex-1 touch-none overflow-hidden",
+              "relative min-h-0 flex-1 overflow-hidden",
+              scale > 1 ? "touch-none" : "touch-pan-y lg:touch-none",
               panning ? "cursor-grabbing" : url ? "cursor-grab" : "cursor-default",
             ].join(" ")}
             onWheel={onWheel}

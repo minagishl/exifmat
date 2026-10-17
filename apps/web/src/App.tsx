@@ -458,7 +458,7 @@ export default function App() {
   return (
     <div className="flex min-h-dvh flex-col bg-[var(--color-zinc-900)] lg:h-dvh lg:flex-row lg:overflow-hidden">
       <h1 className="sr-only">exifmat — photo frames with camera metadata</h1>
-      <div className="flex min-h-[min(100dvh,720px)] min-w-0 flex-1 flex-col lg:min-h-0">
+      <div className="flex min-h-[min(70dvh,720px)] min-w-0 flex-1 flex-col lg:min-h-0">
         <ImagePanel
           zoomSlot={zoomSlot}
           hasFile={file !== null}

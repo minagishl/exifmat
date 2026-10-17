@@ -392,7 +392,7 @@ export function Sidebar({
           </SidebarSection>
         </div>
 
-        <footer className="shrink-0 border-t border-white/10 bg-zinc-900 px-4 pt-3.5 pb-4">
+        <footer className="shrink-0 border-t border-white/10 bg-zinc-900 px-4 pt-3.5 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <div className="mb-3.5 flex items-center justify-between">
             <h2 className={ui.sectionTitle}>Export</h2>
             <div
