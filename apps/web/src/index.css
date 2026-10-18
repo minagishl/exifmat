@@ -11,6 +11,12 @@ body,
   min-height: 100%;
 }
 
+html,
+body {
+  /* Block pull-to-refresh / overscroll chaining on mobile while still allowing normal scroll. */
+  overscroll-behavior: none;
+}
+
 body {
   margin: 0;
   font-family: var(--font-sans);

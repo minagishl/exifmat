@@ -1,5 +1,6 @@
 import {
   useCallback,
+  useEffect,
   useRef,
   useState,
   useSyncExternalStore,
@@ -174,6 +175,9 @@ export function ImagePanel({
     if (!url || e.button !== 0) return;
     if ((e.target as HTMLElement).closest("button")) return;
 
+    // Keep the gesture on the image; otherwise mobile browsers treat a
+    // downward drag as pull-to-refresh when the page is at scroll top.
+    e.preventDefault();
     e.currentTarget.setPointerCapture(e.pointerId);
     panStartRef.current = { x: e.clientX, y: e.clientY, panX, panY };
     setPanning(true);
@@ -181,6 +185,7 @@ export function ImagePanel({
 
   const onViewportPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (!panStartRef.current) return;
+    e.preventDefault();
     const { x, y, panX: startPanX, panY: startPanY } = panStartRef.current;
     setPanX(startPanX + (e.clientX - x));
     setPanY(startPanY + (e.clientY - y));
@@ -196,6 +201,17 @@ export function ImagePanel({
       /* already released */
     }
   };
+
+  // Safari / Chrome still honor document-level pull-to-refresh unless
+  // touchmove is cancelled while the image is being dragged.
+  useEffect(() => {
+    if (!panning) return;
+    const blockRefresh = (e: TouchEvent) => {
+      e.preventDefault();
+    };
+    document.addEventListener("touchmove", blockRefresh, { passive: false });
+    return () => document.removeEventListener("touchmove", blockRefresh);
+  }, [panning]);
 
   const zoomToolbar = (className: string) => (
     <div
