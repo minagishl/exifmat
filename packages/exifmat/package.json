@@ -1,6 +1,6 @@
 {
   "name": "exifmat",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Lightweight EXIF photo frame generator for browser and Node.js / Bun",
   "keywords": [
     "canvas",
